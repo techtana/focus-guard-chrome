@@ -58,7 +58,7 @@ function parentalCard(): HTMLElement {
       h('p', { class: 'tpl-summary' }, summary),
     );
   }
-  const id = uniqueId('tpl');
+  const id = 'tpl-parental';
   const box = h('input', { type: 'checkbox', id, checked: parental.selected, 'aria-describedby': `${id}-sum` });
   box.addEventListener('change', () => {
     parental.selected = box.checked;
