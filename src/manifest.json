@@ -6,7 +6,7 @@
   "version": "1.0.0",
   "default_locale": "en",
   "minimum_chrome_version": "120",
-  "permissions": ["declarativeNetRequest", "storage", "alarms", "tabs", "idle", "notifications", "scripting"],
+  "permissions": ["declarativeNetRequest", "storage", "alarms", "tabs", "idle", "notifications", "scripting", "offscreen"],
   "host_permissions": ["<all_urls>"],
   "background": { "service_worker": "background.js", "type": "module" },
   "action": {

@@ -1,0 +1,16 @@
+/* Parental controls section. */
+.parental-features, .parental-list { margin: 8px 0 12px; padding-left: 20px; }
+.parental-features li, .parental-list li { margin: 4px 0; }
+.grid-pins { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0 16px; }
+.pin-input { max-width: 16em; }
+.parental-toggle { margin: 6px 0 10px; }
+.parental-toggle .hint, .section-body .radio-row .hint { margin-left: 22px; }
+.section-body .radio-row { margin: 4px 0 8px; }
+.parental-sub { margin: 0 0 8px 22px; padding-left: 12px; border-left: 2px solid var(--border); }
+.parental-sub fieldset { border: none; padding: 0; margin: 0 0 6px; }
+.parental-errors:empty { display: none; }
+.parental-warning { border-color: var(--warn); background: var(--warn-soft); }
+.parental-warning h2 { color: var(--warn); }
+.parental-status .row { margin-bottom: 4px; }
+.actions-cell { text-align: right; }
+hr.sep { border: none; border-top: 1px solid var(--border); margin: 16px 0; }

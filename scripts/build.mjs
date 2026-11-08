@@ -3,6 +3,7 @@
 //   node scripts/build.mjs --watch   rebuild on change
 import * as esbuild from 'esbuild';
 import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import { basename, dirname, extname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -19,6 +20,8 @@ const entries = [
   { in: 'options/options.ts', out: 'options', format: 'iife' },
   { in: 'blocked/blocked.ts', out: 'blocked', format: 'iife' },
   { in: 'onboarding/onboarding.ts', out: 'onboarding', format: 'iife' },
+  { in: 'content/parental.ts', out: 'parental', format: 'iife' },
+  { in: 'offscreen/offscreen.ts', out: 'offscreen', format: 'esm' },
 ];
 
 function walk(dir) {
@@ -59,6 +62,22 @@ function copyStatic() {
   }
   mkdirSync(join(dist, '_locales', 'en'), { recursive: true });
   writeFileSync(join(dist, '_locales', 'en', 'messages.json'), JSON.stringify(messages, null, 2));
+  // NSFW image classifier (parental controls): nsfwjs ships MobileNetV2 as base64 inside JS
+  // modules. Decode it once into a TF.js layers model (model.json + binary shard) so the
+  // offscreen document loads ~2.6 MB of binary from the extension package, never the network.
+  const nsfwDir = join(root, 'node_modules', 'nsfwjs', 'dist', 'models', 'mobilenet_v2');
+  if (existsSync(nsfwDir)) {
+    const req = createRequire(join(root, 'package.json'));
+    const modelJson = req(join(nsfwDir, 'model.min.js'));
+    const weights = req(join(nsfwDir, 'group1-shard1of1.min.js'));
+    const out = join(dist, 'models', 'nsfw_mobilenet_v2');
+    mkdirSync(out, { recursive: true });
+    const manifest = modelJson.weightsManifest.map((g) => ({ ...g, paths: g.paths.map((p) => `${p}.bin`) }));
+    writeFileSync(join(out, 'model.json'), JSON.stringify({ format: 'layers-model', modelTopology: modelJson.modelTopology, weightsManifest: manifest }));
+    writeFileSync(join(out, 'group1-shard1of1.bin'), Buffer.from(String(weights.default ?? weights), 'base64'));
+  } else {
+    console.warn('skip: nsfwjs not installed, image classifier model not copied');
+  }
 }
 
 async function main() {

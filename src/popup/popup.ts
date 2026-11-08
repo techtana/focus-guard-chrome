@@ -92,6 +92,9 @@ function render() {
       { class: 'top' },
       h('img', { src: 'icons/icon48.png', alt: '' }),
       h('span', { class: 'brand' }, 'FocusGuard'),
+      s.config.parental?.enabled
+        ? h('span', { class: 'pill info parental-pill' }, t('parental_popup_on', 'Parental controls on'))
+        : null,
     ),
   );
 

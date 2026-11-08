@@ -2,7 +2,7 @@
 
 FocusGuard is a Chrome extension (Manifest V3) that combines the self-control features of StayFocusd and the convenience features of BlockSite. It blocks sites, sets daily time budgets, hides parts of pages (YouTube Shorts, comments, feeds), runs Pomodoro focus sessions, and has a Hard Lock that cannot be cancelled. Usage insights stay on your device.
 
-It implements v1 of the PRD *FocusGuard — User Persona & PRD*: all three milestones (M1 core blocking, M2 commitment and focus, M3 insights and polish).
+It implements v1 of the PRD *FocusGuard — User Persona & PRD*: all three milestones (M1 core blocking, M2 commitment and focus, M3 insights and polish). It also adds **parental controls**, which the PRD had left for later (see below).
 
 ## Install (unpacked)
 
@@ -25,8 +25,8 @@ Requirements: Node 22.18+ (the tests run TypeScript directly), Chrome 120+ or an
 | `npm run build` | Bundle `src/` into `dist/` with esbuild |
 | `npm run watch` | Rebuild on change |
 | `npm run typecheck` | `tsc --noEmit` over sources and tests |
-| `npm test` | Unit tests (`node --test`, 66 tests) |
-| `npm run e2e` | Build, then load `dist/` into a real headless Chrome with a throwaway profile (13 tests). Uses the installed Chrome; set `CHROME_PATH` to use another. |
+| `npm test` | Unit tests (`node --test`, 92 tests) |
+| `npm run e2e` | Build, then load `dist/` into a real headless Chrome with a throwaway profile: core (13), parental controls (7) and the image classifier (1). Uses the installed Chrome; set `CHROME_PATH` to use another. The parental suite needs `openssl` for a throwaway HTTPS certificate. |
 | `npm run zip` | Build and write `focusguard-<version>.zip` for the Chrome Web Store |
 | `npm run icons` | Redraw the PNG icons in `src/icons/` |
 | `npm run check` | typecheck + unit tests + build |
@@ -64,6 +64,23 @@ Service worker  ── owns all state (chrome.storage is the source of truth)
 | `src/popup/`, `src/blocked/`, `src/onboarding/` | Toolbar popup, block page, first-run page |
 | `src/ui/` | DOM helper (no `innerHTML`), gate dialogs, shared CSS (light and dark) |
 | `src/locales/*.json` | UI strings, merged into `_locales/en/messages.json` at build |
+
+## Parental controls
+
+Settings → **Parental controls** (or the fourth onboarding card) turns on a filter for a child's browser, protected by a guardian PIN. The PIN is separate from your own commitment level. Every parental setting needs it, and Pause and Hard Lock do not touch the filter. Parental blocks run in the highest priority band, so the user's own allow rules cannot open a filtered site.
+
+| Layer | How it works |
+| --- | --- |
+| Known adult sites | A curated list of 231 domains (`src/parental/known-sites.ts`), blocked with subdomains before the page loads (declarativeNetRequest). |
+| Page detection | A content script, registered only while parental mode is on, checks adult-content labels (RTA, `rating`, `og:restrictions:age`) and scores a weighted multilingual word list over the URL, title, meta, headings, link text and a capped text sample. The page stays hidden until the check finishes, for at most 1.5 s. |
+| Adaptive learning | With "block the whole site", a detected page teaches FocusGuard the site, and every later visit is blocked before it loads. Guardians see learned sites and can forget them. |
+| Image scanning | NSFWJS (MobileNetV2, 2.7 MB) runs on TensorFlow.js in an offscreen document: about 24 ms per image after a 4 s first load. Explicit images are blurred, and a page with several is blocked. At High sensitivity, images stay blurred until cleared. |
+| Social feeds | On Reddit, X, Instagram, Tumblr and TikTok, single posts are hidden (posts the site marks NSFW, or explicit post text) instead of blocking the whole site. |
+| SafeSearch | Google, Bing and DuckDuckGo searches get their strict-filtering parameter, and YouTube requests get the `YouTube-Restrict: Strict` header (Restricted Mode). |
+
+On the block page a guardian can allow a learned site with the PIN. Sensitivity (low, medium, high), extra blocked words and always-allowed sites are adjustable.
+
+**Limits.** Anyone who can open `chrome://extensions` can remove an extension. For real enforcement, use Google Family Link or Chrome policies: `ExtensionInstallForcelist`, `IncognitoModeAvailability=1` and `DeveloperToolsAvailability=2`. Incognito is not filtered unless FocusGuard is allowed there; the settings page warns when it is not. On-device detection can miss content or flag a safe page. The social-site selectors and the explicit-image thresholds have not been checked on real signed-in feeds or real explicit images.
 
 ## Requirements coverage
 
@@ -107,7 +124,7 @@ The end-to-end suite covers UC-1 to UC-7 and FR-2.1/FR-8.1 against a real Chrome
 
 ## Privacy
 
-FocusGuard stores only domains, durations and counts per day, plus your own rules. It never reads page text or form data. It never stores full URLs from your browsing; the open tracking segment lives in memory-only session storage and holds just the domain. It makes no network requests of its own and has no analytics. Insights older than 120 days are deleted automatically, and Settings → Insights can delete them all at once.
+FocusGuard stores only domains, durations and counts per day, plus your own rules. It never reads page text or form data, with one exception: while parental controls are on, page text and images are analysed on this device, and only the names of learned sites are kept. It never stores full URLs from your browsing; the open tracking segment lives in memory-only session storage and holds just the domain. It makes no network requests of its own and has no analytics. The image classifier re-downloads images already on the page, without cookies, to score them locally. Insights older than 120 days are deleted automatically, and Settings → Insights can delete them all at once.
 
 ## License
 

@@ -1,6 +1,6 @@
 import { DEFAULT_FOCUS } from './focus.ts';
 import { budgetPeriodKey } from './schedule.ts';
-import type { Config, Runtime, Settings } from './types.ts';
+import type { Config, ParentalConfig, Runtime, Settings } from './types.ts';
 
 export const DEFAULT_SETTINGS: Settings = {
   commitment: 'none',
@@ -10,6 +10,20 @@ export const DEFAULT_SETTINGS: Settings = {
   idleSeconds: 60,
   uninstallUrl: '',
   minutesPerBlockedAttempt: 3,
+};
+
+export const DEFAULT_PARENTAL: ParentalConfig = {
+  enabled: false,
+  blockKnownSites: true,
+  detectPages: true,
+  detectScope: 'site',
+  hideUntilChecked: true,
+  scanImages: true,
+  sensitivity: 'medium',
+  safeSearch: true,
+  socialFilter: true,
+  blockedWords: [],
+  allowedSites: [],
 };
 
 export function defaultConfig(): Config {
@@ -23,6 +37,7 @@ export function defaultConfig(): Config {
     blockPage: { message: '', hasImage: false },
     categoryOverrides: {},
     onboarded: false,
+    parental: { ...DEFAULT_PARENTAL },
   };
 }
 
@@ -32,6 +47,7 @@ export function defaultRuntime(now: number, resetTime = '00:00'): Runtime {
     focus: null,
     pausedUntil: null,
     budget: { period: budgetPeriodKey(now, resetTime), used: {}, warned: [] },
+    parentalDetected: [],
   };
 }
 
@@ -51,6 +67,7 @@ export function migrateConfig(raw: unknown): Config {
     groups: Array.isArray(c.groups) ? c.groups : [],
     lockSchedules: Array.isArray(c.lockSchedules) ? c.lockSchedules : [],
     categoryOverrides: c.categoryOverrides ?? {},
+    parental: { ...base.parental, ...(c.parental ?? {}) },
   };
 }
 
@@ -66,6 +83,7 @@ export function migrateRuntime(raw: unknown, now: number, resetTime: string): Ru
       r.budget && typeof r.budget.period === 'string'
         ? { period: r.budget.period, used: r.budget.used ?? {}, warned: r.budget.warned ?? [] }
         : base.budget,
+    parentalDetected: Array.isArray(r.parentalDetected) ? r.parentalDetected : [],
   };
 }
 

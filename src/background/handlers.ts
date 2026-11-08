@@ -17,8 +17,12 @@ import {
 import { describeSchedule, localDateKey, nextBudgetReset } from '../shared/schedule.ts';
 import type { Rule } from '../shared/types.ts';
 import { expandTargets, hostOf, normalizeHost, targetHost, targetLabel } from '../shared/url.ts';
-import { applyChange, requestChallenge } from './apply.ts';
-import { currentEntries, isSupportedUrl } from './engine.ts';
+import { applyChange, recordDetection, requestChallenge } from './apply.ts';
+import { KNOWN_ADULT_SITES } from '../parental/known-sites.ts';
+import type { OffscreenClassifyResponse } from '../shared/messages.ts';
+import { isAllowedHost, PARENTAL_REASON, PARENTAL_RULE_ID, parentalBlockPath } from '../shared/parental.ts';
+import type { PageVerdict } from '../shared/types.ts';
+import { currentEntries, isSupportedUrl, syncOffscreen } from './engine.ts';
 import { dayRecord, getPresets, updateStats } from './state.ts';
 
 function budgetViews(es: EngineState, rules: Rule[]): BudgetView[] {
@@ -31,9 +35,12 @@ async function snapshot(): Promise<Snapshot> {
   const { es, entries } = await currentEntries();
   const { config, runtime, now } = es;
   const { passwordHash, ...settings } = config.settings;
+  const { pinHash, ...parental } = config.parental;
   return {
     now,
-    config: { ...config, settings: { ...settings, hasPassword: !!passwordHash } },
+    config: { ...config, settings: { ...settings, hasPassword: !!passwordHash }, parental: { ...parental, hasPin: !!pinHash } },
+    parentalKnownSites: KNOWN_ADULT_SITES.length,
+    incognitoAllowed: await chrome.extension.isAllowedIncognitoAccess(),
     runtime,
     focusPhase: runtime.focus ? currentPhase(runtime.focus, now) : null,
     focusEndsAt: runtime.focus ? sessionEndsAt(runtime.focus) : null,
@@ -83,7 +90,40 @@ const DEFAULT_MESSAGES = [
 /** Dedupe attempts: the same rule in the same tab within 3 s counts once. */
 const recentAttempts = new Map<string, number>();
 
-async function blockInfo(ruleId: string, t: number, count: boolean, tabId: number | undefined): Promise<BlockInfo> {
+const PARENTAL_TEXT: Record<number, string> = {
+  [PARENTAL_REASON.known]: 'This site is on the list of adult sites.',
+  [PARENTAL_REASON.detectedSite]: 'FocusGuard found adult content on this site.',
+  [PARENTAL_REASON.detectedPage]: 'FocusGuard found adult content on this page.',
+};
+
+async function parentalInfo(t: number, host: string | undefined, count: boolean, tabId: number | undefined): Promise<BlockInfo> {
+  const h = host ? normalizeHost(host) : undefined;
+  if (count) {
+    const now = Date.now();
+    const key = `${tabId}:parental`;
+    if (now - (recentAttempts.get(key) ?? 0) > 3000) {
+      recentAttempts.set(key, now);
+      await updateStats((stats) => {
+        const d = (dayRecord(stats, localDateKey(now)).domains[h ?? '(parental filter)'] ??= { active: 0, blocked: 0 });
+        d.blocked += 1;
+      });
+    }
+  }
+  return {
+    found: true,
+    ruleName: 'Parental controls',
+    site: h ?? 'This site',
+    reason: 'parental',
+    reasonText: PARENTAL_TEXT[t] ?? PARENTAL_TEXT[0],
+    unblockAt: null,
+    message: 'If you think this is a mistake, ask a parent or guardian.',
+    image: null,
+    parentalHost: t === PARENTAL_REASON.known ? undefined : h,
+  };
+}
+
+async function blockInfo(ruleId: string, t: number, count: boolean, tabId: number | undefined, host?: string): Promise<BlockInfo> {
+  if (ruleId === PARENTAL_RULE_ID) return parentalInfo(t, host, count, tabId);
   const { es, entries } = await currentEntries();
   const { config, runtime, now } = es;
   const rule = config.rules.find((r) => r.id === ruleId);
@@ -190,7 +230,7 @@ export async function handle(req: Request, sender: chrome.runtime.MessageSender)
     case 'tabStatus':
       return tabStatus(req.tabId);
     case 'blockInfo':
-      return blockInfo(String(req.ruleId), Number(req.targetIndex) || 0, !!req.count, sender.tab?.id);
+      return blockInfo(String(req.ruleId), Number(req.targetIndex) || 0, !!req.count, sender.tab?.id, req.host ? String(req.host) : undefined);
     case 'startPicker':
       return startPicker(req.tabId);
     case 'pickerAdd':
@@ -200,5 +240,43 @@ export async function handle(req: Request, sender: chrome.runtime.MessageSender)
       return { ok: true };
     case 'openOptions':
       return openOptions(req.section);
+    case 'parentalVerdict':
+      return parentalVerdict(req.verdict, sender);
+    case 'classifyImages':
+      return classifyImages(req.urls);
+  }
+}
+
+/** The parental content script found an explicit page: learn the site (scope 'site') and block the tab. */
+async function parentalVerdict(v: PageVerdict, sender: chrome.runtime.MessageSender): Promise<{ blocked: boolean }> {
+  const { es } = await currentEntries();
+  const p = es.config.parental;
+  const tabId = sender.tab?.id;
+  const url = sender.tab?.url ?? sender.url;
+  const host = url ? hostOf(url) : null;
+  if (!v?.explicit || !p.enabled || (!p.detectPages && v.source !== 'images') || tabId === undefined || !host) return { blocked: false };
+  if (v.source === 'images' && !p.scanImages) return { blocked: false };
+  if (isAllowedHost(host, p.allowedSites)) return { blocked: false };
+  const site = p.detectScope === 'site';
+  if (site) await recordDetection(host, Number(v.score) || 0, v.source);
+  const path = parentalBlockPath(site ? PARENTAL_REASON.detectedSite : PARENTAL_REASON.detectedPage, host);
+  await chrome.tabs.update(tabId, { url: chrome.runtime.getURL(path.slice(1)) }).catch(() => undefined);
+  return { blocked: true };
+}
+
+/** Forward image URLs to the offscreen classifier. */
+async function classifyImages(urls: string[]): Promise<{ results: OffscreenClassifyResponse['results'] | null }> {
+  const { es } = await currentEntries();
+  const p = es.config.parental;
+  if (!p.enabled || !p.scanImages) return { results: null };
+  const list = (Array.isArray(urls) ? urls : []).filter((u) => typeof u === 'string' && /^https?:\/\//.test(u)).slice(0, 16);
+  if (!list.length) return { results: [] };
+  await syncOffscreen(true);
+  try {
+    const res = (await chrome.runtime.sendMessage({ target: 'offscreen', type: 'classify', urls: list })) as OffscreenClassifyResponse | undefined;
+    if (!res || res.error) return { results: null };
+    return { results: res.results };
+  } catch {
+    return { results: null };
   }
 }

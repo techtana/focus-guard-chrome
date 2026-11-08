@@ -1,7 +1,8 @@
 // Block page (FR-7.1, FR-7.2, UC-1). Reached by redirect as
 // /blocked.html?r=<ruleId>&t=<targetIndex>. It never sees the visited URL.
 import { send, type BlockInfo } from '../shared/messages.ts';
-import { $, clear, formatClock, formatCountdown, h, t } from '../ui/dom.ts';
+import { $, append, clear, formatClock, formatCountdown, h, t } from '../ui/dom.ts';
+import { applyChange } from '../ui/gate.ts';
 
 function tf(key: string, fallback: string, ...subs: string[]): string {
   return t(key, fallback, subs).replace(/\$(\d)/g, (_, n) => subs[Number(n) - 1] ?? '');
@@ -11,6 +12,8 @@ const app = $('#app');
 const params = new URLSearchParams(location.search);
 const ruleId = params.get('r') ?? '';
 const targetIndex = Number(params.get('t') ?? '0') || 0;
+/** Host of a parental block, when the worker knows it (detected sites). */
+const hostParam = params.get('h') ?? undefined;
 
 let timer: ReturnType<typeof setInterval> | undefined;
 
@@ -23,7 +26,7 @@ function shouldCount(): boolean {
 async function load(count: boolean) {
   let info: BlockInfo;
   try {
-    info = await send({ type: 'blockInfo', ruleId, targetIndex, count });
+    info = await send({ type: 'blockInfo', ruleId, targetIndex, count, host: hostParam });
   } catch {
     info = {
       found: false,
@@ -75,12 +78,62 @@ function actions(primaryBack: boolean): HTMLElement {
   );
 }
 
+/** Parental block: calm, no countdown, no link into settings; a guardian may allow a known host. */
+function renderParental(info: BlockInfo, logo: HTMLElement) {
+  document.title = t('parental_blocked_title', 'Blocked by parental controls');
+  const host = info.parentalHost;
+  const status = h('p', { class: 'parental-status', role: 'status', 'aria-live': 'polite' });
+  append(app, [
+    logo,
+    h('h1', null, t('parental_blocked_heading', 'This page is blocked by parental controls')),
+    host ? h('p', { class: 'parental-host' }, host) : null,
+    h(
+      'p',
+      { class: 'reason' },
+      info.reasonText ||
+        t('parental_blocked_reason', 'A parent or guardian has set this browser to keep explicit content away. If you think this is a mistake, ask them to take a look.'),
+    ),
+    h(
+      'div',
+      { class: 'actions' },
+      history.length > 1 ? goBackButton(true) : null,
+      h('button', { class: history.length > 1 ? 'btn' : 'btn primary', type: 'button', onclick: closeTab }, t('blocked_closeTab', 'Close tab')),
+    ),
+  ]);
+  if (host) {
+    const allow = h(
+      'button',
+      {
+        class: 'btn link',
+        type: 'button',
+        onclick: async () => {
+          allow.disabled = true;
+          status.textContent = '';
+          const res = await applyChange({ kind: 'parental.allowSite', host });
+          allow.disabled = false;
+          if (res.ok) {
+            status.textContent = t('parental_blocked_allowed', 'Allowed. Opening the site…');
+            location.href = `https://${host}/`;
+          }
+        },
+      },
+      t('parental_blocked_allow', 'A parent can allow this site'),
+    );
+    app.append(h('div', { class: 'parental-allow' }, allow, status));
+  }
+}
+
 function render(info: BlockInfo) {
   clearInterval(timer);
   clear(app);
   app.removeAttribute('aria-busy');
   const logo = h('img', { class: 'logo', src: 'icons/icon128.png', alt: '' });
   const site = info.site || t('blocked_thisSite', 'This site');
+
+  if (info.reason === 'parental') {
+    renderParental(info, logo);
+    return;
+  }
 
   if (info.reason === 'inactive') {
     document.title = t('blocked_openTitle', 'Open again · FocusGuard');

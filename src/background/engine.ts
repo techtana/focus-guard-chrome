@@ -20,6 +20,14 @@ import {
 } from '../shared/rules.ts';
 import { atLocalMinutes, budgetPeriodKey, localDateKey, parseHHMM, startOfLocalDay } from '../shared/schedule.ts';
 import type { Config, FocusSession, HideIndex, Runtime } from '../shared/types.ts';
+import { KNOWN_ADULT_SITES } from '../parental/known-sites.ts';
+import {
+  compileParentalDnr,
+  needsParentalScript,
+  parentalBlockFor,
+  parentalBlockPath,
+  parentalIndexOf,
+} from '../shared/parental.ts';
 import { parseHttpUrl } from '../shared/url.ts';
 import { notify, setGlobalBadge, setTabBadge } from './notify.ts';
 import { dayRecord, getPresets, getState, save, updateStats, withLock } from './state.ts';
@@ -34,6 +42,14 @@ export function isSupportedUrl(url: string | undefined): boolean {
 
 export function engineState(config: Config, runtime: Runtime, now = Date.now()): EngineState {
   return { config, runtime, now };
+}
+
+export const KNOWN_SET = new Set(KNOWN_ADULT_SITES);
+
+/** Parental block page URL for a tab URL, or null. Parental blocks win over everything else. */
+export function parentalUrl(url: string, config: Config, rt: Runtime): string | null {
+  const b = parentalBlockFor(url, config.parental, rt.parentalDetected, KNOWN_SET);
+  return b ? chrome.runtime.getURL(parentalBlockPath(b.t, b.host).slice(1)) : null;
 }
 
 /** Where a tab on a blocked/redirected URL should go, or null. */
@@ -185,11 +201,11 @@ async function writeHideIndex(entries: ActiveEntry[]): Promise<void> {
 }
 
 /** Send every open tab on a now-blocked URL to the block page or redirect (FR-2.3, UC-4). */
-async function sweepTabs(entries: ActiveEntry[]): Promise<void> {
+async function sweepTabs(entries: ActiveEntry[], config: Config, rt: Runtime): Promise<void> {
   const tabs = await chrome.tabs.query({});
   for (const tab of tabs) {
     if (tab.id === undefined || !isSupportedUrl(tab.url)) continue;
-    const target = enforcementUrl(decideUrl(tab.url!, entries), entries);
+    const target = parentalUrl(tab.url!, config, rt) ?? enforcementUrl(decideUrl(tab.url!, entries), entries);
     if (target) await chrome.tabs.update(tab.id, { url: target }).catch(() => undefined);
   }
 }
@@ -248,6 +264,63 @@ export async function recordBudgetsForInsights(config: Config, rt: Runtime): Pro
   });
 }
 
+// ---- Parental mode plumbing ----
+
+const PARENTAL_SCRIPT_ID = 'fg-parental';
+let lastParentalJson = '';
+
+async function syncParental(config: Config): Promise<void> {
+  const p = config.parental;
+  // Content script, registered only while needed so normal browsing pays nothing.
+  const want = needsParentalScript(p);
+  const have = (await chrome.scripting.getRegisteredContentScripts({ ids: [PARENTAL_SCRIPT_ID] })).length > 0;
+  if (want && !have) {
+    await chrome.scripting.registerContentScripts([
+      { id: PARENTAL_SCRIPT_ID, js: ['parental.js'], matches: ['http://*/*', 'https://*/*'], runAt: 'document_start', allFrames: false, persistAcrossSessions: true },
+    ]);
+    // Tabs already open get it too.
+    const tabs = await chrome.tabs.query({ url: ['http://*/*', 'https://*/*'] });
+    await Promise.all(
+      tabs.map((t) => (t.id === undefined || !isSupportedUrl(t.url) ? undefined : chrome.scripting.executeScript({ target: { tabId: t.id }, files: ['parental.js'] }).catch(() => undefined))),
+    );
+  } else if (!want && have) {
+    await chrome.scripting.unregisterContentScripts({ ids: [PARENTAL_SCRIPT_ID] });
+  }
+  // Index for the content script.
+  const json = JSON.stringify(parentalIndexOf(p, 0));
+  if (json !== lastParentalJson) {
+    const got = await chrome.storage.local.get('parentalIndex');
+    const prevRev = (got.parentalIndex as { rev?: number } | undefined)?.rev ?? 0;
+    const prevJson = got.parentalIndex ? JSON.stringify({ ...(got.parentalIndex as object), rev: 0 }) : '';
+    if (prevJson !== json) await chrome.storage.local.set({ parentalIndex: parentalIndexOf(p, prevRev + 1) });
+    lastParentalJson = json;
+  }
+  await syncOffscreen(p.enabled && p.scanImages);
+}
+
+async function hasOffscreen(): Promise<boolean> {
+  const contexts = await chrome.runtime.getContexts({ contextTypes: [chrome.runtime.ContextType.OFFSCREEN_DOCUMENT] });
+  return contexts.length > 0;
+}
+
+let creatingOffscreen: Promise<void> | null = null;
+
+/** Create or close the offscreen document that runs the image classifier. */
+export async function syncOffscreen(on: boolean): Promise<void> {
+  const has = await hasOffscreen();
+  if (on && !has) {
+    creatingOffscreen ??= chrome.offscreen
+      .createDocument({ url: 'offscreen.html', reasons: [chrome.offscreen.Reason.WORKERS], justification: 'Run the on-device image classifier for parental controls' })
+      .catch((err) => console.warn('FocusGuard: offscreen document failed', err))
+      .finally(() => {
+        creatingOffscreen = null;
+      });
+    await creatingOffscreen;
+  } else if (!on && has) {
+    await chrome.offscreen.closeDocument().catch(() => undefined);
+  }
+}
+
 /** Must be called inside withLock(). */
 export async function recomputeLocked(): Promise<ActiveEntry[]> {
   const st = await getState();
@@ -255,9 +328,11 @@ export async function recomputeLocked(): Promise<ActiveEntry[]> {
   await housekeeping(st.config, st.runtime, now);
   const es = engineState(st.config, st.runtime, now);
   const entries = computeActive(es, await getPresets());
-  await applyDnr(compileDnr(entries));
+  const userRules = compileDnr(entries);
+  await applyDnr([...userRules, ...compileParentalDnr(st.config.parental, st.runtime.parentalDetected, KNOWN_ADULT_SITES, userRules.length + 1)]);
   await writeHideIndex(entries);
-  await sweepTabs(entries);
+  await syncParental(st.config).catch((err) => console.warn('FocusGuard: parental sync failed', err));
+  await sweepTabs(entries, st.config, st.runtime);
   await updateBadges(es, entries);
   scheduleNext(es);
   await save({ runtime: true });

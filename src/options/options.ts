@@ -9,8 +9,9 @@ import lock from './sections/lock.ts';
 import blockpage from './sections/blockpage.ts';
 import insights from './sections/insights.ts';
 import settings from './sections/settings.ts';
+import parental from './sections/parental.ts';
 
-const SECTIONS: Section[] = [rules, hide, focus, lock, blockpage, insights, settings];
+const SECTIONS: Section[] = [rules, hide, focus, lock, blockpage, insights, parental, settings];
 
 let current: Section = SECTIONS[0];
 let snap: Snapshot | null = null;

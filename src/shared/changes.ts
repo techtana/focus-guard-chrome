@@ -12,6 +12,7 @@ import type {
   FocusConfig,
   Group,
   LockSchedule,
+  ParentalConfig,
   Rule,
   Runtime,
   Settings,
@@ -20,6 +21,7 @@ import type {
 import { targetKey } from './url.ts';
 
 export type SettingsPatch = Partial<Omit<Settings, 'commitment' | 'passwordHash'>>;
+export type ParentalPatch = Partial<Omit<ParentalConfig, 'enabled' | 'pinHash'>>;
 
 export type Change =
   | { kind: 'rule.upsert'; rule: Rule }
@@ -47,7 +49,17 @@ export type Change =
   /** minutes > 0 pauses all non-locked rules; null resumes. */
   | { kind: 'pause'; minutes: number | null }
   | { kind: 'categories.set'; overrides: Record<string, Category> }
-  | { kind: 'onboarding.done' };
+  | { kind: 'onboarding.done' }
+  // ---- Parental controls: all need the guardian PIN once parental mode is on ----
+  /** Turn parental mode on. `pin` (min 4 characters) is required the first time, when no PIN is set. */
+  | { kind: 'parental.enable'; pin?: string; patch?: ParentalPatch }
+  | { kind: 'parental.disable' }
+  | { kind: 'parental.update'; patch: ParentalPatch }
+  | { kind: 'parental.setPin'; newPin: string }
+  /** Add a host to allowedSites and forget any detection of it (e.g. from the block page). */
+  | { kind: 'parental.allowSite'; host: string }
+  /** Forget a learned site, or all learned sites when host is null. */
+  | { kind: 'parental.forget'; host: string | null };
 
 export type ChangeKind = Change['kind'];
 
@@ -58,6 +70,8 @@ export interface Classification {
   lockConflict: string | null;
   /** Refused outright for another reason (FR-6.4: no early end under Challenge). */
   forbidden: string | null;
+  /** Needs the guardian PIN (parental mode is on and a PIN is set). Independent of `loosening`. */
+  guardian: boolean;
 }
 
 const LEVEL_RANK: Record<CommitmentLevel, number> = { none: 0, password: 1, challenge: 2 };
@@ -137,7 +151,12 @@ export function classifyChange(change: Change, config: Config, runtime: Runtime,
   const locks = activeLocks(runtime, now);
   const locked = lockedRuleIds(runtime, now);
   const lockActive = locks.length > 0;
-  const res: Classification = { loosening: false, lockConflict: null, forbidden: null };
+  const res: Classification = { loosening: false, lockConflict: null, forbidden: null, guardian: false };
+  if (change.kind.startsWith('parental.')) {
+    // Parental settings are the guardian's: the user's own commitment level and Hard Locks do not apply.
+    res.guardian = config.parental.enabled && !!config.parental.pinHash;
+    return res;
+  }
   const LOCK_MSG = 'A Hard Lock is active. You can tighten rules, but not loosen them, until it ends.';
   const conflictIf = (cond: boolean) => {
     if (res.loosening && cond) res.lockConflict = LOCK_MSG;

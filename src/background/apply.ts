@@ -11,7 +11,9 @@ import type { ApplyResult, ChallengeInfo, GateProof } from '../shared/messages.t
 import { activeLocks } from '../shared/rules.ts';
 import { isValidHHMM } from '../shared/schedule.ts';
 import type { Config, Rule, Runtime, Schedule, Settings, Target } from '../shared/types.ts';
-import { isValidRedirectUrl, targetKey } from '../shared/url.ts';
+import { isValidRedirectUrl, normalizeHost, targetKey } from '../shared/url.ts';
+import type { ParentalPatch } from '../shared/changes.ts';
+import { learnSite } from '../shared/parental.ts';
 import { addFocusCredits, focusCredits, recomputeLocked } from './engine.ts';
 import { notify } from './notify.ts';
 import { getState, save, withLock } from './state.ts';
@@ -157,7 +159,35 @@ function validate(change: Change, config: Config, rt: Runtime, now: number): str
       return Object.values(change.overrides).every((c) => CATEGORIES.includes(c)) ? null : 'Unknown category.';
     case 'onboarding.done':
       return null;
+    case 'parental.enable':
+      if (!config.parental.pinHash && (change.pin ?? '').length < 4) return 'Choose a guardian PIN of at least 4 characters.';
+      return change.patch ? validateParentalPatch(change.patch) : null;
+    case 'parental.update':
+      return validateParentalPatch(change.patch);
+    case 'parental.setPin':
+      return (change.newPin ?? '').length >= 4 ? null : 'The PIN needs at least 4 characters.';
+    case 'parental.allowSite':
+      return HOST_OK.test(normalizeHost(change.host ?? '')) ? null : 'That is not a site address.';
+    case 'parental.disable':
+    case 'parental.forget':
+      return null;
   }
+}
+
+const HOST_OK = /^[a-z0-9-]+(\.[a-z0-9-]+)+$/;
+
+function validateParentalPatch(p: ParentalPatch): string | null {
+  if (p.sensitivity !== undefined && !['low', 'medium', 'high'].includes(p.sensitivity)) return 'Unknown sensitivity.';
+  if (p.detectScope !== undefined && !['page', 'site'].includes(p.detectScope)) return 'Unknown detection scope.';
+  if (p.blockedWords !== undefined) {
+    if (!Array.isArray(p.blockedWords) || p.blockedWords.length > 200) return 'Use at most 200 blocked words.';
+    if (p.blockedWords.some((w) => typeof w !== 'string' || !w.trim() || w.length > 50)) return 'Each blocked word must be 1–50 characters.';
+  }
+  if (p.allowedSites !== undefined) {
+    if (!Array.isArray(p.allowedSites) || p.allowedSites.length > 500) return 'Use at most 500 allowed sites.';
+    if (p.allowedSites.some((h) => typeof h !== 'string' || !HOST_OK.test(normalizeHost(h)))) return 'One of the allowed sites is not a site address.';
+  }
+  return null;
 }
 
 // ---- Gate ----
@@ -198,7 +228,13 @@ function strip(c: StoredChallenge): ChallengeInfo {
   return rest;
 }
 
-async function verifyProof(level: 'password' | 'challenge', proof: GateProof, settings: Settings): Promise<string | null> {
+async function verifyProof(level: 'password' | 'challenge' | 'guardian', proof: GateProof, config: Config): Promise<string | null> {
+  const settings = config.settings;
+  if (level === 'guardian') {
+    if (proof.kind !== 'guardian') return 'Enter the guardian PIN.';
+    return (await verifyPassword(proof.pin, config.parental.pinHash)) ? null : 'That PIN is not right.';
+  }
+  if (proof.kind === 'guardian') return 'Use your own password or challenge for this change.';
   if (level === 'password') {
     if (proof.kind !== 'password') return 'Enter your password.';
     return (await verifyPassword(proof.password, settings.passwordHash)) ? null : 'That password is not right.';
@@ -328,7 +364,44 @@ async function mutate(change: Change, config: Config, rt: Runtime, now: number):
     case 'onboarding.done':
       config.onboarded = true;
       return;
+    case 'parental.enable':
+      if (change.pin) config.parental.pinHash = await hashPassword(change.pin);
+      config.parental = { ...config.parental, ...(change.patch ?? {}), enabled: true };
+      return;
+    case 'parental.disable':
+      config.parental = { ...config.parental, enabled: false };
+      delete config.parental.pinHash; // turning it on again sets a new PIN
+      return;
+    case 'parental.update': {
+      const patch = { ...change.patch };
+      if (patch.blockedWords) patch.blockedWords = [...new Set(patch.blockedWords.map((w) => w.trim().toLowerCase()))];
+      if (patch.allowedSites) patch.allowedSites = [...new Set(patch.allowedSites.map(normalizeHost))];
+      config.parental = { ...config.parental, ...patch };
+      return;
+    }
+    case 'parental.setPin':
+      config.parental.pinHash = await hashPassword(change.newPin);
+      return;
+    case 'parental.allowSite': {
+      const host = normalizeHost(change.host);
+      config.parental.allowedSites = [...new Set([...config.parental.allowedSites, host])];
+      rt.parentalDetected = rt.parentalDetected.filter((d) => d.host !== host && !d.host.endsWith('.' + host));
+      return;
+    }
+    case 'parental.forget':
+      rt.parentalDetected = change.host === null ? [] : rt.parentalDetected.filter((d) => d.host !== normalizeHost(change.host!));
+      return;
   }
+}
+
+/** Record a site the detector flagged (worker-internal, not a user change). */
+export function recordDetection(host: string, score: number, source: 'meta' | 'text' | 'images'): Promise<void> {
+  return withLock(async () => {
+    const st = await getState();
+    st.runtime.parentalDetected = learnSite(st.runtime.parentalDetected, { host, at: Date.now(), score, source });
+    await save({ runtime: true });
+    await recomputeLocked();
+  });
 }
 
 const GATE_MESSAGE = 'This change loosens your rules, so your commitment level asks for a check first.';
@@ -344,9 +417,13 @@ export function applyChange(change: Change, proof?: GateProof): Promise<ApplyRes
     if (cls.lockConflict) return { ok: false, error: 'locked', message: cls.lockConflict };
     if (cls.forbidden) return { ok: false, error: 'forbidden', message: cls.forbidden };
     const level = st.config.settings.commitment;
-    if (cls.loosening && level !== 'none') {
+    if (cls.guardian) {
+      if (!proof) return { ok: false, error: 'gate', level: 'guardian', message: 'Parental controls are on. A parent or guardian needs to enter the PIN.' };
+      const bad = await verifyProof('guardian', proof, st.config);
+      if (bad) return { ok: false, error: 'wrongProof', message: bad };
+    } else if (cls.loosening && level !== 'none') {
       if (!proof) return { ok: false, error: 'gate', level, message: GATE_MESSAGE };
-      const bad = await verifyProof(level, proof, st.config.settings);
+      const bad = await verifyProof(level, proof, st.config);
       if (bad) return { ok: false, error: 'wrongProof', message: bad };
     }
     // Work on copies so a failure part-way leaves the cached state untouched.

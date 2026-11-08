@@ -14,11 +14,19 @@ export interface DnrRule {
   action:
     | { type: 'block' }
     | { type: 'allow' }
-    | { type: 'redirect'; redirect: { extensionPath: string } | { url: string } };
+    | {
+        type: 'redirect';
+        redirect:
+          | { extensionPath: string }
+          | { url: string }
+          | { transform: { queryTransform: { addOrReplaceParams: { key: string; value: string }[] } } };
+      }
+    | { type: 'modifyHeaders'; requestHeaders: { header: string; operation: 'set'; value: string }[] };
   condition: {
     requestDomains?: string[];
+    excludedRequestDomains?: string[];
     regexFilter?: string;
-    resourceTypes: ['main_frame'];
+    resourceTypes: ('main_frame' | 'sub_frame' | 'xmlhttprequest')[];
   };
 }
 

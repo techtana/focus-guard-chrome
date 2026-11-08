@@ -5,7 +5,7 @@
 import type { Request } from '../shared/messages.ts';
 import { decideUrl } from '../shared/rules.ts';
 import { applyChange } from './apply.ts';
-import { currentEntries, enforcementUrl, isSupportedUrl, recompute } from './engine.ts';
+import { currentEntries, enforcementUrl, isSupportedUrl, parentalUrl, recompute } from './engine.ts';
 import { handle } from './handlers.ts';
 import { getState } from './state.ts';
 import { flush, onActivity } from './tracker.ts';
@@ -64,6 +64,8 @@ chrome.alarms.onAlarm.addListener((alarm) => {
 chrome.runtime.onMessage.addListener((msg: Request, sender, sendResponse) => {
   // Only our own pages and content scripts can talk to us (no externally_connectable).
   if (sender.id !== chrome.runtime.id) return false;
+  // Messages for the offscreen classifier are answered there, not here.
+  if ((msg as { target?: string })?.target === 'offscreen') return false;
   handle(msg, sender)
     .then(sendResponse)
     .catch((err) => {
@@ -81,8 +83,8 @@ chrome.tabs.onUpdated.addListener((tabId, info, tab) => {
   // restores bypass declarativeNetRequest: enforce them here.
   const spa = !!info.url && !info.status;
   if ((spa || info.status === 'complete') && isSupportedUrl(tab.url)) {
-    void currentEntries().then(({ entries }) => {
-      const target = enforcementUrl(decideUrl(tab.url!, entries), entries);
+    void currentEntries().then(({ entries, es }) => {
+      const target = parentalUrl(tab.url!, es.config, es.runtime) ?? enforcementUrl(decideUrl(tab.url!, entries), entries);
       if (target) chrome.tabs.update(tabId, { url: target }).catch(() => undefined);
     });
   }

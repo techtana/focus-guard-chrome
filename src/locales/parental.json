@@ -1,0 +1,347 @@
+{
+  "parental_allowed_hint": {
+    "message": "One site per line, for example wikipedia.org. The parental filter never blocks these. Your own rules still apply."
+  },
+  "parental_allowed_label": {
+    "message": "Always allowed sites"
+  },
+  "parental_blocked_allow": {
+    "message": "A parent can allow this site"
+  },
+  "parental_blocked_allowed": {
+    "message": "Allowed. Opening the site…"
+  },
+  "parental_blocked_heading": {
+    "message": "This page is blocked by parental controls"
+  },
+  "parental_blocked_reason": {
+    "message": "A parent or guardian has set this browser to keep explicit content away. If you think this is a mistake, ask them to take a look."
+  },
+  "parental_blocked_title": {
+    "message": "Blocked by parental controls"
+  },
+  "parental_cancel": {
+    "message": "Undo changes"
+  },
+  "parental_change_pin": {
+    "message": "Change PIN"
+  },
+  "parental_col_actions": {
+    "message": "Actions"
+  },
+  "parental_col_how": {
+    "message": "How"
+  },
+  "parental_col_site": {
+    "message": "Site"
+  },
+  "parental_col_when": {
+    "message": "Detected"
+  },
+  "parental_feat_images": {
+    "message": "Scans images on this device with a built-in classifier, blurs explicit ones and blocks pages that show several."
+  },
+  "parental_feat_known": {
+    "message": "Blocks $1 known adult sites, with their subdomains."
+  },
+  "parental_feat_pages": {
+    "message": "Checks each page on this device for explicit content (adult-content labels, words in the title, address and text) and blocks it. It can learn a whole site from one page."
+  },
+  "parental_feat_safe": {
+    "message": "Turns on SafeSearch for Google, Bing and DuckDuckGo, and YouTube Restricted Mode."
+  },
+  "parental_feat_social": {
+    "message": "Hides individual NSFW or sensitive posts in social feeds, so the rest of the site still works."
+  },
+  "parental_forget": {
+    "message": "Forget"
+  },
+  "parental_forget_all": {
+    "message": "Forget all"
+  },
+  "parental_forget_all_body": {
+    "message": "They open again until a page on them is detected again."
+  },
+  "parental_forget_all_title": {
+    "message": "Forget all learned sites?"
+  },
+  "parental_forget_label": {
+    "message": "Forget $1"
+  },
+  "parental_forgot": {
+    "message": "$1 forgotten."
+  },
+  "parental_forgot_all": {
+    "message": "All learned sites forgotten."
+  },
+  "parental_incog_1": {
+    "message": "Open chrome://extensions in the address bar."
+  },
+  "parental_incog_2": {
+    "message": "Find FocusGuard and click Details."
+  },
+  "parental_incog_3": {
+    "message": "Turn on “Allow in Incognito”."
+  },
+  "parental_incog_body": {
+    "message": "Chrome does not run extensions in Incognito unless you allow it, so a child could open an Incognito window to get around the filter."
+  },
+  "parental_incog_policy": {
+    "message": "Or turn Incognito off entirely with the Chrome policy IncognitoModeAvailability=1."
+  },
+  "parental_incog_title": {
+    "message": "Incognito windows are not filtered"
+  },
+  "parental_layers_legend": {
+    "message": "Filters"
+  },
+  "parental_learned_hint": {
+    "message": "Sites blocked because one of their pages was detected. Only the site name is kept."
+  },
+  "parental_learned_none": {
+    "message": "No sites learned yet."
+  },
+  "parental_learned_title": {
+    "message": "Learned sites"
+  },
+  "parental_limits_detect": {
+    "message": "On-device detection can miss content or flag a safe page. If a safe site is blocked, a guardian can allow it with the PIN, here or on the block page."
+  },
+  "parental_limits_policy": {
+    "message": "For real enforcement, use Google Family Link, or Chrome policies on this computer:"
+  },
+  "parental_limits_policy_dev": {
+    "message": "(no developer tools)."
+  },
+  "parental_limits_policy_force": {
+    "message": "(force-install FocusGuard),"
+  },
+  "parental_limits_policy_incog": {
+    "message": "(no Incognito) and"
+  },
+  "parental_limits_remove": {
+    "message": "Anyone who can open chrome://extensions can turn off or remove any extension, including this one. The PIN protects settings inside FocusGuard, not the extension itself."
+  },
+  "parental_limits_title": {
+    "message": "Limits you should know"
+  },
+  "parental_ob_already": {
+    "message": "Already turned on"
+  },
+  "parental_ob_more": {
+    "message": "Fine-tune sensitivity, allowed sites and more later under Parental controls."
+  },
+  "parental_ob_persona": {
+    "message": "For a browser a child uses"
+  },
+  "parental_ob_pin": {
+    "message": "Guardian PIN"
+  },
+  "parental_ob_pin2": {
+    "message": "Repeat PIN"
+  },
+  "parental_ob_pinHint": {
+    "message": "At least 4 characters. Keep it from the child: it is needed to change or turn off parental controls."
+  },
+  "parental_ob_pinMismatch": {
+    "message": "The two guardian PINs do not match."
+  },
+  "parental_ob_pinShort": {
+    "message": "The guardian PIN needs at least 4 characters."
+  },
+  "parental_ob_privacy": {
+    "message": "With parental controls on, pages and images are checked on this device only. Only the names of sites it learns to block are kept; nothing is sent anywhere."
+  },
+  "parental_ob_summary": {
+    "message": "Blocks known adult sites, checks pages and images on this device for explicit content, hides NSFW posts in social feeds and turns on SafeSearch. A guardian PIN protects these settings."
+  },
+  "parental_ob_title": {
+    "message": "Parental controls (for a child)"
+  },
+  "parental_off_confirm_body": {
+    "message": "Known sites, page and image checks, feed filtering and SafeSearch all stop. Learned sites are kept for when you turn it on again."
+  },
+  "parental_off_confirm_title": {
+    "message": "Turn off parental controls?"
+  },
+  "parental_off_hint": {
+    "message": "Turning parental controls off needs the PIN."
+  },
+  "parental_off_lead": {
+    "message": "Turn this on for a browser a child uses. A guardian PIN protects every parental setting."
+  },
+  "parental_off_title": {
+    "message": "Keep explicit content away from a child"
+  },
+  "parental_off_toast": {
+    "message": "Parental controls are off."
+  },
+  "parental_on_toast": {
+    "message": "Parental controls are on."
+  },
+  "parental_opt_hide": {
+    "message": "Hide pages until they are checked"
+  },
+  "parental_opt_hide_hint": {
+    "message": "Stops explicit content flashing on screen. Pages can appear a moment later."
+  },
+  "parental_opt_images": {
+    "message": "Scan images"
+  },
+  "parental_opt_images_hint": {
+    "message": "Blurs explicit images and blocks pages that show several. Uses more processing power."
+  },
+  "parental_opt_known": {
+    "message": "Block known adult sites"
+  },
+  "parental_opt_known_hint": {
+    "message": "$1 sites, including their subdomains."
+  },
+  "parental_opt_pages": {
+    "message": "Check pages for explicit content"
+  },
+  "parental_opt_pages_hint": {
+    "message": "Looks at adult-content labels and words in the title, address and text, on this device."
+  },
+  "parental_opt_safe": {
+    "message": "Force SafeSearch and YouTube Restricted Mode"
+  },
+  "parental_opt_safe_hint": {
+    "message": "Google, Bing and DuckDuckGo results are filtered; YouTube hides mature videos."
+  },
+  "parental_opt_social": {
+    "message": "Filter social media feeds"
+  },
+  "parental_opt_social_hint": {
+    "message": "Hides individual NSFW or sensitive posts (for example on Reddit and X) instead of blocking the whole site."
+  },
+  "parental_pin_changed": {
+    "message": "PIN changed."
+  },
+  "parental_pin_hint": {
+    "message": "At least $1 characters. Keep it from the child."
+  },
+  "parental_pin_kept": {
+    "message": "Your earlier guardian PIN is still set and will be used."
+  },
+  "parental_pin_mismatch": {
+    "message": "The two PINs do not match."
+  },
+  "parental_pin_new": {
+    "message": "Guardian PIN"
+  },
+  "parental_pin_new2": {
+    "message": "New PIN"
+  },
+  "parental_pin_repeat": {
+    "message": "Repeat PIN"
+  },
+  "parental_pin_short": {
+    "message": "The PIN needs at least $1 characters."
+  },
+  "parental_pin_title": {
+    "message": "Guardian PIN"
+  },
+  "parental_popup_on": {
+    "message": "Parental controls on"
+  },
+  "parental_privacy_body": {
+    "message": "Pages and images are checked on this device only. FocusGuard keeps just the names of sites it learns to block, never page text, images or addresses, and sends nothing anywhere."
+  },
+  "parental_privacy_title": {
+    "message": "Privacy"
+  },
+  "parental_save": {
+    "message": "Save"
+  },
+  "parental_saved": {
+    "message": "Parental settings saved."
+  },
+  "parental_scope_legend": {
+    "message": "When a page is detected"
+  },
+  "parental_scope_page": {
+    "message": "Only the page"
+  },
+  "parental_scope_page_hint": {
+    "message": "Other pages on the same site stay open and are checked one by one."
+  },
+  "parental_scope_site": {
+    "message": "Block the whole site once a page is detected"
+  },
+  "parental_scope_site_hint": {
+    "message": "FocusGuard learns the site and blocks it before it loads next time."
+  },
+  "parental_section_title": {
+    "message": "Parental controls"
+  },
+  "parental_sens_high": {
+    "message": "High"
+  },
+  "parental_sens_high_hint": {
+    "message": "Also suggestive content, and images stay blurred until checked. Best for young children; more false alarms."
+  },
+  "parental_sens_legend": {
+    "message": "Sensitivity"
+  },
+  "parental_sens_low": {
+    "message": "Low"
+  },
+  "parental_sens_low_hint": {
+    "message": "Only clearly explicit pages and images. Fewest false alarms."
+  },
+  "parental_sens_medium": {
+    "message": "Medium"
+  },
+  "parental_sens_medium_hint": {
+    "message": "Explicit pages and images, plus strongly suggestive ones. Recommended."
+  },
+  "parental_settings_title": {
+    "message": "What to filter"
+  },
+  "parental_site_bad": {
+    "message": "“$1” is not a site address."
+  },
+  "parental_src_images": {
+    "message": "Images"
+  },
+  "parental_src_meta": {
+    "message": "Adult-content label"
+  },
+  "parental_src_text": {
+    "message": "Page text"
+  },
+  "parental_status_line": {
+    "message": "$1 of 5 filters on · sensitivity $2 · $3 learned sites · $4 extra words · $5 allowed sites"
+  },
+  "parental_status_on": {
+    "message": "On"
+  },
+  "parental_status_pin": {
+    "message": "Every change on this page asks for the guardian PIN."
+  },
+  "parental_status_title": {
+    "message": "Parental controls are protecting this browser"
+  },
+  "parental_turn_off": {
+    "message": "Turn off"
+  },
+  "parental_turn_off_btn": {
+    "message": "Turn off parental controls"
+  },
+  "parental_turn_on": {
+    "message": "Turn on parental controls"
+  },
+  "parental_word_long": {
+    "message": "“$1…” is longer than $2 characters."
+  },
+  "parental_words_hint": {
+    "message": "One per line, up to $1. A page that uses one of these words counts as explicit."
+  },
+  "parental_words_label": {
+    "message": "Extra blocked words"
+  },
+  "parental_words_many": {
+    "message": "Use at most $1 blocked words (you have $2)."
+  }
+}

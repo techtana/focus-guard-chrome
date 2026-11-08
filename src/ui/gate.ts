@@ -32,8 +32,8 @@ export async function applyChange(change: Change, opts: ApplyOptions = {}): Prom
   return res;
 }
 
-function proofLevel(p: GateProof): 'password' | 'challenge' {
-  return p.kind === 'password' ? 'password' : 'challenge';
+function proofLevel(p: GateProof): 'password' | 'challenge' | 'guardian' {
+  return p.kind === 'password' ? 'password' : p.kind === 'guardian' ? 'guardian' : 'challenge';
 }
 
 /** Open a modal <dialog>; resolves with whatever `done` is called with (null on Esc/cancel). */
@@ -72,8 +72,29 @@ export function confirmDialog(title: string, body: string, confirmLabel = 'Confi
   ]).then((v) => !!v);
 }
 
-async function runGate(level: 'password' | 'challenge', message: string): Promise<GateProof | null> {
+async function runGate(level: 'password' | 'challenge' | 'guardian', message: string): Promise<GateProof | null> {
+  if (level === 'guardian') return pinGate(message);
   return level === 'password' ? passwordGate(message) : challengeGate(message);
+}
+
+/** Guardian PIN for parental-control changes. */
+function pinGate(message: string): Promise<GateProof | null> {
+  return modal<GateProof>('Parent or guardian PIN', (done) => {
+    const input = h('input', { type: 'password', autocomplete: 'off', inputmode: 'numeric', class: 'input', id: 'gate-pin' });
+    const submit = () => input.value && done({ kind: 'guardian', pin: input.value });
+    input.addEventListener('keydown', (e) => e.key === 'Enter' && submit());
+    queueMicrotask(() => input.focus());
+    return [
+      h('p', null, message),
+      h('div', { class: 'field' }, h('label', { for: 'gate-pin' }, 'Guardian PIN'), input),
+      h(
+        'div',
+        { class: 'row end' },
+        h('button', { class: 'btn', type: 'button', onclick: () => done(null) }, 'Cancel'),
+        h('button', { class: 'btn primary', type: 'button', onclick: submit }, 'Unlock'),
+      ),
+    ];
+  });
 }
 
 function passwordGate(message: string): Promise<GateProof | null> {

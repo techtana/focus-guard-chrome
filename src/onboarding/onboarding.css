@@ -10,7 +10,7 @@
   background: var(--primary); color: var(--primary-text); font-size: 0.9rem; font-weight: 700;
 }
 
-.templates { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.templates { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: 12px; }
 .tpl { display: flex; flex-direction: column; gap: 8px; border: 2px solid var(--border); }
 .tpl.selected { border-color: var(--primary); background: var(--primary-soft); }
 .templates > .card + .card { margin-top: 0; }

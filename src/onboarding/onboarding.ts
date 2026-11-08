@@ -36,6 +36,54 @@ const state: { templates: TemplateState[]; level: CommitmentLevel; pw1: string; 
   busy: false,
 };
 
+/** Fourth starter card: parental controls for a child's browser. */
+const parental = { selected: false, pin1: '', pin2: '' };
+
+function parentalAlreadyOn(): boolean {
+  return !!current?.config.parental?.enabled;
+}
+
+function parentalCard(): HTMLElement {
+  const title = t('parental_ob_title', 'Parental controls (for a child)');
+  const persona = t('parental_ob_persona', 'For a browser a child uses');
+  const summary = t(
+    'parental_ob_summary',
+    'Blocks known adult sites, checks pages and images on this device for explicit content, hides NSFW posts in social feeds and turns on SafeSearch. A guardian PIN protects these settings.',
+  );
+  if (parentalAlreadyOn()) {
+    return h(
+      'div',
+      { class: 'card tpl selected' },
+      h('div', { class: 'tpl-head' }, h('span', null, h('span', { class: 'tpl-title' }, title), h('br'), h('span', { class: 'tpl-persona' }, t('parental_ob_already', 'Already turned on')))),
+      h('p', { class: 'tpl-summary' }, summary),
+    );
+  }
+  const id = uniqueId('tpl');
+  const box = h('input', { type: 'checkbox', id, checked: parental.selected, 'aria-describedby': `${id}-sum` });
+  box.addEventListener('change', () => {
+    parental.selected = box.checked;
+    render();
+    $<HTMLInputElement>(`#${id}`).focus();
+  });
+  const pin = (value: string, set: (v: string) => void) =>
+    h('input', { class: 'input', type: 'password', autocomplete: 'new-password', inputmode: 'numeric', value, oninput: (e: Event) => set((e.target as HTMLInputElement).value) });
+  return h(
+    'div',
+    { class: `card tpl${parental.selected ? ' selected' : ''}` },
+    h('label', { class: 'tpl-head', for: id }, box, h('span', null, h('span', { class: 'tpl-title' }, title), h('br'), h('span', { class: 'tpl-persona' }, persona))),
+    h('p', { class: 'tpl-summary', id: `${id}-sum` }, summary),
+    parental.selected
+      ? h(
+          'div',
+          { class: 'tpl-options' },
+          field(t('parental_ob_pin', 'Guardian PIN'), pin(parental.pin1, (v) => (parental.pin1 = v)), t('parental_ob_pinHint', 'At least 4 characters. Keep it from the child: it is needed to change or turn off parental controls.')),
+          field(t('parental_ob_pin2', 'Repeat PIN'), pin(parental.pin2, (v) => (parental.pin2 = v))),
+          h('p', { class: 'hint' }, t('parental_ob_more', 'Fine-tune sensitivity, allowed sites and more later under Parental controls.')),
+        )
+      : null,
+  );
+}
+
 const PERMISSIONS: [string, string][] = [
   ['declarativeNetRequest', 'Lets Chrome block or redirect a site before the page loads, using the rules you set. FocusGuard does not see the pages this happens to.'],
   ['storage', 'Saves your rules, settings and daily usage totals on this device.'],
@@ -153,6 +201,11 @@ function permissionsStep(): HTMLElement {
       h('strong', null, 'Privacy: '),
       'Everything stays on this device. FocusGuard keeps only domains, durations and counts — never page content, form data or full addresses — and has no analytics or tracking.',
     ),
+    h(
+      'p',
+      { class: 'hint' },
+      t('parental_ob_privacy', 'With parental controls on, pages and images are checked on this device only. Only the names of sites it learns to block are kept; nothing is sent anywhere.'),
+    ),
   );
 }
 
@@ -177,7 +230,7 @@ function render() {
       'section',
       { class: 'ob-step', 'aria-labelledby': 'step1' },
       h('h2', { id: 'step1' }, h('span', { class: 'step-num', 'aria-hidden': 'true' }, '1'), t('onboarding_step1', 'Pick one or more starter templates')),
-      h('div', { class: 'templates' }, state.templates.map(templateCard)),
+      h('div', { class: 'templates' }, state.templates.map(templateCard), parentalCard()),
       h('p', { class: 'hint' }, 'Or pick none to start from scratch with an empty rule list.'),
     ),
     h(
@@ -203,7 +256,8 @@ function render() {
 
 function summaryText(): string {
   const n = state.templates.filter((x) => x.selected).length;
-  return n ? `${n} template${n > 1 ? 's' : ''} selected` : 'No template selected: you will start with no rules';
+  const base = n ? `${n} template${n > 1 ? 's' : ''} selected` : 'No template selected: you will start with no rules';
+  return parental.selected ? `${base} · parental controls on` : base;
 }
 
 async function finish() {
@@ -220,6 +274,11 @@ async function finish() {
   if (needsNewPassword()) {
     if (state.pw1.length < 8) errors.push('The password needs at least 8 characters.');
     else if (state.pw1 !== state.pw2) errors.push('The two passwords do not match.');
+  }
+  const enableParental = parental.selected && !parentalAlreadyOn();
+  if (enableParental) {
+    if (parental.pin1.length < 4) errors.push(t('parental_ob_pinShort', 'The guardian PIN needs at least 4 characters.'));
+    else if (parental.pin1 !== parental.pin2) errors.push(t('parental_ob_pinMismatch', 'The two guardian PINs do not match.'));
   }
   if (errors.length) {
     render();
@@ -242,6 +301,10 @@ async function finish() {
     if (state.level !== snap.config.settings.commitment) {
       const res = await applyChange({ kind: 'commitment.set', level: state.level, newPassword: state.level === 'password' ? state.pw1 : undefined });
       if (!res.ok && res.error !== 'gate') throw new Error(res.message);
+    }
+    if (enableParental) {
+      const res = await applyChange({ kind: 'parental.enable', pin: parental.pin1 });
+      if (!res.ok) throw new Error(res.message);
     }
     const done = await applyChange({ kind: 'onboarding.done' });
     if (!done.ok) throw new Error(done.message);
