@@ -1,0 +1,39 @@
+/* Insights section (options page). */
+.insights .controls { gap: 12px; }
+.segmented { display: inline-flex; gap: 0; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.segmented .btn { border: none; border-radius: 0; background: var(--surface); }
+.segmented .btn.active { background: var(--primary); color: var(--primary-text); }
+.stepper .range-label { min-width: 13em; text-align: center; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+.kpis .card + .card { margin-top: 0; }
+.kpi-label { color: var(--muted); font-weight: 600; font-size: 0.88em; }
+.kpi-value { font-size: 1.6rem; font-weight: 700; font-variant-numeric: tabular-nums; margin: 2px 0; }
+
+.chart { width: 100%; height: auto; display: block; }
+.chart-bar { fill: var(--primary); }
+.chart-bar.empty { fill: var(--surface-2); }
+.chart-col { cursor: pointer; }
+.chart-col:hover .chart-bar { opacity: 0.85; }
+.chart-axis { stroke: var(--muted); stroke-width: 1; }
+.chart-grid { stroke: var(--border); stroke-width: 1; stroke-dasharray: 3 3; }
+.chart-tick { fill: var(--muted); font-size: 11px; }
+.chart-tick.sub { font-size: 10px; }
+.chart-value { fill: var(--text); font-size: 11px; font-weight: 600; }
+
+.two-col { display: grid; grid-template-columns: minmax(240px, 1fr) minmax(320px, 1.6fr); gap: 16px; align-items: start; }
+.two-col .card + .card { margin-top: 0; }
+@media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
+
+.hbars { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.hbars li { display: grid; grid-template-columns: 6.5em 1fr auto; gap: 8px; align-items: center; }
+.hbar-label { font-weight: 600; }
+.hbar-track { height: 10px; background: var(--surface-2); border-radius: 999px; overflow: hidden; }
+.hbar-fill { display: block; height: 100%; background: var(--primary); border-radius: 999px; }
+.hbar-fill.cat-other { background: var(--muted); }
+.hbar-value { color: var(--muted); font-size: 0.88em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+table.sites .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+table.sites th[scope='row'] { font-weight: 500; word-break: break-all; }
+table.sites .pill { margin-left: 6px; }
+.cat-select { min-width: 8.5em; padding: 2px 6px; min-height: 28px; }

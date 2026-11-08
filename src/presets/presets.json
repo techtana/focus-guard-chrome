@@ -1,0 +1,94 @@
+{
+  "version": 1,
+  "updated": "2026-11-08",
+  "presets": [
+    {
+      "id": "youtube",
+      "name": "YouTube",
+      "sites": ["youtube.com"],
+      "options": [
+        {
+          "id": "shorts",
+          "label": "Shorts",
+          "selectors": [
+            "grid-shelf-view-model:has(ytm-shorts-lockup-view-model)",
+            "ytm-shorts-lockup-view-model-v2",
+            "ytm-shorts-lockup-view-model",
+            "ytd-rich-item-renderer:has(ytm-shorts-lockup-view-model)",
+            "ytd-reel-shelf-renderer",
+            "ytd-rich-shelf-renderer[is-shorts]",
+            "ytd-rich-section-renderer:has(ytd-rich-shelf-renderer[is-shorts])",
+            "ytd-video-renderer:has(a[href^=\"/shorts/\"])",
+            "ytd-grid-video-renderer:has(a[href^=\"/shorts/\"])",
+            "ytd-guide-entry-renderer:has(a[href=\"/shorts/\"])",
+            "ytd-mini-guide-entry-renderer:has(a[href=\"/shorts/\"])"
+          ]
+        },
+        {
+          "id": "comments",
+          "label": "Comments",
+          "selectors": ["ytd-comments#comments", "ytd-watch-flexy #comments"]
+        },
+        {
+          "id": "sidebar",
+          "label": "Recommendations next to videos",
+          "selectors": ["ytd-watch-flexy #related", "ytd-watch-next-secondary-results-renderer", ".ytp-endscreen-content"]
+        },
+        {
+          "id": "homefeed",
+          "label": "Home feed",
+          "selectors": ["ytd-browse[page-subtype=\"home\"] ytd-rich-grid-renderer"]
+        }
+      ]
+    },
+    {
+      "id": "reddit",
+      "name": "Reddit",
+      "sites": ["reddit.com"],
+      "options": [
+        {
+          "id": "feed",
+          "label": "Feed",
+          "selectors": ["shreddit-feed", "[data-testid=\"post-container\"]"]
+        },
+        {
+          "id": "sidebar",
+          "label": "Sidebar",
+          "selectors": ["#right-sidebar-container", "#right-sidebar-contents", "[data-testid=\"frontpage-sidebar\"]"]
+        }
+      ]
+    },
+    {
+      "id": "x",
+      "name": "X (Twitter)",
+      "sites": ["x.com", "twitter.com"],
+      "options": [
+        {
+          "id": "foryou",
+          "label": "“For you” timeline",
+          "selectors": [
+            "[data-testid=\"primaryColumn\"]:has([role=\"tablist\"] [role=\"presentation\"]:first-child > [role=\"tab\"][aria-selected=\"true\"]) section[role=\"region\"]",
+            "[data-testid=\"primaryColumn\"] [role=\"tablist\"] [role=\"presentation\"]:first-child:has(> a[href=\"/home\"][role=\"tab\"])"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "instagram",
+      "name": "Instagram",
+      "sites": ["instagram.com"],
+      "options": [
+        {
+          "id": "reels",
+          "label": "Reels",
+          "selectors": ["a[href=\"/reels/\"]", "article:has(a[href*=\"/reel/\"])"]
+        },
+        {
+          "id": "explore",
+          "label": "Explore",
+          "selectors": ["a[href=\"/explore/\"]"]
+        }
+      ]
+    }
+  ]
+}

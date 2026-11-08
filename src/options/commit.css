@@ -1,0 +1,24 @@
+/* Focus, Hard Lock, Settings and Block page sections. */
+.countdown-big { font-size: 2.4rem; font-weight: 700; font-variant-numeric: tabular-nums; margin: 4px 0 8px; }
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0 16px; }
+.grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0 12px; }
+.stack-sm { display: flex; flex-direction: column; gap: 4px; margin: 8px 0; }
+.quick-picks { margin: -4px 0 4px; }
+.row .field { margin-bottom: 4px; }
+.rule-checks > div { margin: 2px 0; }
+.radio-row { margin: 6px 0 10px; }
+.radio-row .hint { margin-left: 22px; }
+.days .check.day { min-width: 56px; }
+.lock-card { border-color: var(--danger); }
+.lock-item + .lock-item { border-top: 1px solid var(--border); margin-top: 12px; padding-top: 12px; }
+.card.inset { box-shadow: none; background: var(--surface-2); margin-top: 12px; }
+.card.note { background: var(--surface-2); box-shadow: none; }
+
+.bp-preview {
+  display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center;
+  padding: 28px 16px; border-radius: var(--radius); background: var(--bg); border: 1px dashed var(--border);
+}
+.bp-preview-img { max-width: 240px; max-height: 160px; border-radius: 8px; object-fit: contain; }
+.bp-preview-title { font-size: 1.4rem; font-weight: 700; }
+.bp-preview-reason { color: var(--muted); }
+.bp-preview-msg { max-width: 420px; font-size: 1.05rem; margin: 0; }

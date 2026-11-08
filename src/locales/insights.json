@@ -1,0 +1,77 @@
+{
+  "insights_perDay": {
+    "message": "Active time per day"
+  },
+  "insights_perDayHint": {
+    "message": "Time on a site counts only while its tab is active, the window has focus and you are not idle. Click a day to see it on its own."
+  },
+  "insights_byCategory": {
+    "message": "Time by category"
+  },
+  "insights_noData": {
+    "message": "No browsing time recorded for this period."
+  },
+  "insights_topSites": {
+    "message": "Top sites"
+  },
+  "insights_noSites": {
+    "message": "Nothing yet. Browse as usual and check back later."
+  },
+  "insights_yourData": {
+    "message": "Your data"
+  },
+  "insights_privacy": {
+    "message": "Insights stay on this device. FocusGuard stores only domains, durations and counts per day — never page content, form data or full URLs. Data older than 120 days is removed automatically."
+  },
+  "insights_exportSites": {
+    "message": "Export site usage (CSV)"
+  },
+  "insights_exportDaily": {
+    "message": "Export daily summary (CSV)"
+  },
+  "insights_deleteAll": {
+    "message": "Delete all insights data"
+  },
+  "insights_day": {
+    "message": "Day"
+  },
+  "insights_week": {
+    "message": "Week"
+  },
+  "insights_today": {
+    "message": "Today"
+  },
+  "insights_active": {
+    "message": "Active time"
+  },
+  "insights_focus": {
+    "message": "Focus time"
+  },
+  "insights_focusHint": {
+    "message": "Work intervals of focus sessions"
+  },
+  "insights_blocked": {
+    "message": "Blocked attempts"
+  },
+  "insights_saved": {
+    "message": "Time saved"
+  },
+  "onboarding_title": {
+    "message": "Welcome to FocusGuard"
+  },
+  "onboarding_lead": {
+    "message": "Keep the useful parts of the web and lose the rabbit holes. Pick a starting point — you can change everything later."
+  },
+  "onboarding_step1": {
+    "message": "Pick one or more starter templates"
+  },
+  "onboarding_step2": {
+    "message": "How firm should FocusGuard be?"
+  },
+  "onboarding_step3": {
+    "message": "What FocusGuard can access, and why"
+  },
+  "onboarding_finish": {
+    "message": "Finish setup"
+  }
+}

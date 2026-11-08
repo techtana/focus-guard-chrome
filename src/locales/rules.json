@@ -1,0 +1,404 @@
+{
+  "hide_add": {
+    "message": "Add hiding rule"
+  },
+  "hide_cancel": {
+    "message": "Cancel"
+  },
+  "hide_custom": {
+    "message": "Custom hiding rules"
+  },
+  "hide_custom_empty": {
+    "message": "No custom hiding rules yet."
+  },
+  "hide_custom_selectors": {
+    "message": "custom selectors"
+  },
+  "hide_delete": {
+    "message": "Delete"
+  },
+  "hide_delete_body": {
+    "message": "The hidden elements will show again. This cannot be undone."
+  },
+  "hide_delete_title": {
+    "message": "Delete this hiding rule?"
+  },
+  "hide_deleted": {
+    "message": "Hiding rule deleted."
+  },
+  "hide_edit": {
+    "message": "Edit hiding rule"
+  },
+  "hide_edit_btn": {
+    "message": "Edit"
+  },
+  "hide_err_no_selectors": {
+    "message": "Add at least one CSS selector."
+  },
+  "hide_err_selector_bad": {
+    "message": "is not a valid CSS selector."
+  },
+  "hide_err_site": {
+    "message": "Enter the site to hide elements on."
+  },
+  "hide_focus_only": {
+    "message": "Only during focus work intervals"
+  },
+  "hide_intro": {
+    "message": "Hide the distracting parts of a site and keep the useful part: Shorts, comments, feeds and recommendations."
+  },
+  "hide_name": {
+    "message": "Name (optional)"
+  },
+  "hide_new": {
+    "message": "New hiding rule"
+  },
+  "hide_no_presets": {
+    "message": "No presets are available."
+  },
+  "hide_off": {
+    "message": "Off"
+  },
+  "hide_on": {
+    "message": "On"
+  },
+  "hide_picker_body": {
+    "message": "Open the site, click the FocusGuard toolbar button, choose Hide an element, then click the part of the page to hide. Press Esc to cancel."
+  },
+  "hide_picker_title": {
+    "message": "Pick an element on the page"
+  },
+  "hide_preset_legend": {
+    "message": "Hide"
+  },
+  "hide_preset_off_body": {
+    "message": "All of its elements will show again."
+  },
+  "hide_preset_off_title": {
+    "message": "Turn off this preset?"
+  },
+  "hide_preset_save": {
+    "message": "Save"
+  },
+  "hide_preset_saved": {
+    "message": "Preset saved."
+  },
+  "hide_preset_suffix": {
+    "message": "preset"
+  },
+  "hide_presets": {
+    "message": "Presets"
+  },
+  "hide_presets_version": {
+    "message": "Preset version"
+  },
+  "hide_save": {
+    "message": "Save hiding rule"
+  },
+  "hide_saved": {
+    "message": "Hiding rule saved."
+  },
+  "hide_schedule": {
+    "message": "Schedule:"
+  },
+  "hide_selectors": {
+    "message": "CSS selectors to hide"
+  },
+  "hide_selectors_hint": {
+    "message": "One per line. Each line is checked separately."
+  },
+  "hide_sites": {
+    "message": "Site"
+  },
+  "hide_sites_hint": {
+    "message": "A domain, or a URL prefix such as youtube.com/watch. One per line."
+  },
+  "hide_subdomains": {
+    "message": "Include subdomains"
+  },
+  "hide_title": {
+    "message": "Element hiding"
+  },
+  "hide_turn_off": {
+    "message": "Turn off"
+  },
+  "rules_action_allow": {
+    "message": "Allow (exception to other rules)"
+  },
+  "rules_action_block": {
+    "message": "Block"
+  },
+  "rules_action_budget": {
+    "message": "Daily budget:"
+  },
+  "rules_action_hide": {
+    "message": "Hide elements"
+  },
+  "rules_action_redirect": {
+    "message": "Redirect to"
+  },
+  "rules_add": {
+    "message": "Add rule"
+  },
+  "rules_always": {
+    "message": "Always"
+  },
+  "rules_budget_of": {
+    "message": "of"
+  },
+  "rules_budget_used": {
+    "message": "used today"
+  },
+  "rules_cancel": {
+    "message": "Cancel"
+  },
+  "rules_days": {
+    "message": "Days"
+  },
+  "rules_delete": {
+    "message": "Delete"
+  },
+  "rules_delete_body": {
+    "message": "will be removed. This cannot be undone."
+  },
+  "rules_delete_title": {
+    "message": "Delete this rule?"
+  },
+  "rules_deleted": {
+    "message": "Rule deleted."
+  },
+  "rules_edit": {
+    "message": "Edit rule"
+  },
+  "rules_edit_btn": {
+    "message": "Edit"
+  },
+  "rules_edit_hide": {
+    "message": "Edit in Element hiding"
+  },
+  "rules_empty": {
+    "message": "No rules yet. Add one, or block the current site from the toolbar button."
+  },
+  "rules_enabled": {
+    "message": "On"
+  },
+  "rules_err_days": {
+    "message": "Pick at least one day for the schedule."
+  },
+  "rules_err_group_name": {
+    "message": "Give the group a name."
+  },
+  "rules_err_group_targets": {
+    "message": "Add at least one site to the group."
+  },
+  "rules_err_minutes": {
+    "message": "Minutes per day must be a whole number from 1 to 1440."
+  },
+  "rules_err_no_targets": {
+    "message": "Add at least one site, URL or group."
+  },
+  "rules_err_redirect": {
+    "message": "Enter a redirect address that starts with http:// or https://."
+  },
+  "rules_err_target_bad": {
+    "message": "is not a site or URL."
+  },
+  "rules_err_target_line": {
+    "message": "Line"
+  },
+  "rules_err_window": {
+    "message": "Time window"
+  },
+  "rules_err_window_bad": {
+    "message": "enter a start and end time."
+  },
+  "rules_focus_only": {
+    "message": "Only during focus work intervals (adds the sites to the focus list)"
+  },
+  "rules_group_add": {
+    "message": "Add group"
+  },
+  "rules_group_delete_body": {
+    "message": "This cannot be undone."
+  },
+  "rules_group_delete_title": {
+    "message": "Delete this group?"
+  },
+  "rules_group_delete_used": {
+    "message": "Rules that use this group will stop covering its sites. This cannot be undone."
+  },
+  "rules_group_deleted": {
+    "message": "Group deleted."
+  },
+  "rules_group_edit": {
+    "message": "Edit group"
+  },
+  "rules_group_name": {
+    "message": "Group name"
+  },
+  "rules_group_name_ph": {
+    "message": "e.g. Social"
+  },
+  "rules_group_new": {
+    "message": "New group"
+  },
+  "rules_group_save": {
+    "message": "Save group"
+  },
+  "rules_group_saved": {
+    "message": "Group saved."
+  },
+  "rules_group_sites_hint": {
+    "message": "One per line. Rules that include this group apply to all of these sites."
+  },
+  "rules_group_used_by": {
+    "message": "Used by rules:"
+  },
+  "rules_groups": {
+    "message": "Groups"
+  },
+  "rules_groups_empty": {
+    "message": "No groups yet."
+  },
+  "rules_groups_include": {
+    "message": "Include groups"
+  },
+  "rules_groups_intro": {
+    "message": "A group is a named list of sites that several rules can share."
+  },
+  "rules_heading": {
+    "message": "Rules"
+  },
+  "rules_intro": {
+    "message": "Rules block, redirect or budget sites. When rules overlap, a more specific exception wins over a broader rule; otherwise the strictest rule wins."
+  },
+  "rules_match_mode": {
+    "message": "Match"
+  },
+  "rules_matches": {
+    "message": "Matches:"
+  },
+  "rules_minutes": {
+    "message": "Minutes per day"
+  },
+  "rules_minutes_hint": {
+    "message": "Counts only while the tab is active, the window is focused and you are not idle."
+  },
+  "rules_mode_auto": {
+    "message": "Sites and URL prefixes"
+  },
+  "rules_mode_exact": {
+    "message": "Exact URLs only"
+  },
+  "rules_name": {
+    "message": "Name (optional)"
+  },
+  "rules_name_ph": {
+    "message": "e.g. Social media"
+  },
+  "rules_new": {
+    "message": "New rule"
+  },
+  "rules_on_schedule": {
+    "message": "On a schedule"
+  },
+  "rules_pill_active": {
+    "message": "Active now"
+  },
+  "rules_pill_allow": {
+    "message": "Exception"
+  },
+  "rules_pill_focus": {
+    "message": "Focus only"
+  },
+  "rules_pill_idle": {
+    "message": "Not active now"
+  },
+  "rules_pill_locked_on": {
+    "message": "Locked on"
+  },
+  "rules_pill_loop": {
+    "message": "Redirect loop: shows block page"
+  },
+  "rules_pill_off": {
+    "message": "Off"
+  },
+  "rules_redirect_hint": {
+    "message": "An http or https address. If it is blocked too, the block page shows instead."
+  },
+  "rules_redirect_to": {
+    "message": "Redirect to"
+  },
+  "rules_remove": {
+    "message": "Remove"
+  },
+  "rules_save": {
+    "message": "Save rule"
+  },
+  "rules_saved": {
+    "message": "Rule saved."
+  },
+  "rules_sites": {
+    "message": "Sites and URLs"
+  },
+  "rules_sites_hint": {
+    "message": "One per line. A bare domain blocks the whole site; add a path for part of a site; start a line with = for one exact URL."
+  },
+  "rules_subdomains": {
+    "message": "Include subdomains (m.reddit.com, old.reddit.com …)"
+  },
+  "rules_title": {
+    "message": "Rules"
+  },
+  "rules_type": {
+    "message": "What happens"
+  },
+  "rules_type_allow": {
+    "message": "Allow (exception)"
+  },
+  "rules_type_allow_hint": {
+    "message": "Keep these URLs open even when a broader rule blocks the site."
+  },
+  "rules_type_block": {
+    "message": "Block"
+  },
+  "rules_type_block_hint": {
+    "message": "Show the block page."
+  },
+  "rules_type_budget": {
+    "message": "Daily time budget"
+  },
+  "rules_type_budget_hint": {
+    "message": "Allow some minutes a day, then block."
+  },
+  "rules_type_redirect": {
+    "message": "Redirect"
+  },
+  "rules_type_redirect_hint": {
+    "message": "Send the tab to another page."
+  },
+  "rules_untitled": {
+    "message": "Untitled rule"
+  },
+  "rules_when": {
+    "message": "When"
+  },
+  "rules_win_add": {
+    "message": "Add time window"
+  },
+  "rules_win_from": {
+    "message": "From"
+  },
+  "rules_win_hint": {
+    "message": "No time windows means all day on the chosen days. An end time earlier than the start runs past midnight."
+  },
+  "rules_win_remove": {
+    "message": "Remove time window"
+  },
+  "rules_win_to": {
+    "message": "To"
+  },
+  "rules_windows": {
+    "message": "Time windows"
+  }
+}

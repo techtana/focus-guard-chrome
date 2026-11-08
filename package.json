@@ -1,0 +1,25 @@
+{
+  "name": "focus-guard-chrome",
+  "version": "1.0.0",
+  "private": true,
+  "description": "FocusGuard: one Chrome extension for site blocking, time budgets, hard locks, element hiding, Pomodoro focus sessions and local usage insights.",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "watch": "node scripts/build.mjs --watch",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "node --test \"test/**/*.test.ts\"",
+    "e2e": "npm run build && node --test --test-concurrency=1 \"e2e/**/*.test.mjs\"",
+    "icons": "node scripts/make-icons.mjs",
+    "zip": "npm run build && node scripts/zip.mjs",
+    "check": "npm run typecheck && npm test && npm run build"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.287",
+    "@types/node": "^22.10.0",
+    "esbuild": "^0.24.0",
+    "puppeteer-core": "^25.16.0",
+    "typescript": "^5.8.0"
+  }
+}

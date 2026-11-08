@@ -1,0 +1,6 @@
+node_modules/
+dist/
+*.zip
+.e2e-profile/
+test-results/
+.claude/worktrees/

@@ -1,0 +1,7 @@
+{
+  "extName": { "message": "FocusGuard" },
+  "extDescription": {
+    "message": "Block sites, set daily time budgets, hide feeds and Shorts, run Pomodoro focus sessions and hard locks. Local-first insights."
+  },
+  "actionTitle": { "message": "FocusGuard" }
+}

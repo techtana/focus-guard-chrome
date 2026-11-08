@@ -1,0 +1,191 @@
+{
+  "popup_loadError": {
+    "message": "FocusGuard could not load: $1"
+  },
+  "popup_minutesLeft": {
+    "message": "$1 min left"
+  },
+  "popup_paused": {
+    "message": "Paused until $1"
+  },
+  "popup_resumed": {
+    "message": "FocusGuard is back on."
+  },
+  "popup_resume": {
+    "message": "Resume"
+  },
+  "popup_linkRules": {
+    "message": "Rules"
+  },
+  "popup_linkInsights": {
+    "message": "Insights"
+  },
+  "popup_linkSettings": {
+    "message": "Settings"
+  },
+  "popup_thisSite": {
+    "message": "This site"
+  },
+  "popup_unsupported": {
+    "message": "FocusGuard can’t act on this page."
+  },
+  "popup_byRule": {
+    "message": "by “$1”"
+  },
+  "popup_blocked": {
+    "message": "Blocked"
+  },
+  "popup_redirected": {
+    "message": "Redirected"
+  },
+  "popup_allowed": {
+    "message": "Allowed"
+  },
+  "popup_exception": {
+    "message": "exception $1"
+  },
+  "popup_hiding": {
+    "message": "Hiding elements"
+  },
+  "popup_noRules": {
+    "message": "No rules for this site right now."
+  },
+  "popup_budgetOf": {
+    "message": "Daily budget “$1”"
+  },
+  "popup_leftToday": {
+    "message": "$1 left today"
+  },
+  "popup_budgetUsed": {
+    "message": "Budget used up"
+  },
+  "popup_blockSite": {
+    "message": "Block this site"
+  },
+  "popup_budgetSite": {
+    "message": "Give this site a daily budget…"
+  },
+  "popup_minutesPerDay": {
+    "message": "Minutes per day"
+  },
+  "popup_save": {
+    "message": "Save"
+  },
+  "popup_cancel": {
+    "message": "Cancel"
+  },
+  "popup_hideElement": {
+    "message": "Hide an element on this page"
+  },
+  "popup_blockedToast": {
+    "message": "$1 is now blocked."
+  },
+  "popup_budgetInvalid": {
+    "message": "Enter whole minutes from 1 to 1440."
+  },
+  "popup_budgetName": {
+    "message": "$1 daily budget"
+  },
+  "popup_budgetToast": {
+    "message": "$1 now has $2 minutes a day."
+  },
+  "popup_pickerFailed": {
+    "message": "The element picker can’t run on this page."
+  },
+  "popup_focusTitle": {
+    "message": "Focus session"
+  },
+  "popup_cycle": {
+    "message": "Cycle $1 of $2"
+  },
+  "popup_sessionEnds": {
+    "message": "Session ends at $1"
+  },
+  "popup_endLocked": {
+    "message": "A Hard Lock is active, so the session can’t end early."
+  },
+  "popup_endChallenge": {
+    "message": "Your commitment level is Challenge, so sessions can’t end early."
+  },
+  "popup_sessionEnded": {
+    "message": "Focus session ended."
+  },
+  "popup_endEarly": {
+    "message": "End early"
+  },
+  "popup_focusStarted": {
+    "message": "Focus session started."
+  },
+  "popup_startFocus": {
+    "message": "Start focus ($1/$2 × $3)"
+  },
+  "popup_focusList": {
+    "message": "Blocks $1 focus-list rule(s) during work intervals."
+  },
+  "popup_focusEmpty": {
+    "message": "Your focus list is empty. "
+  },
+  "popup_addSites": {
+    "message": "Add sites"
+  },
+  "popup_lockTitle": {
+    "message": "Hard Lock"
+  },
+  "popup_lockedUntil": {
+    "message": "Locked until $1"
+  },
+  "popup_lockExtended": {
+    "message": "Hard Lock extended by 30 minutes."
+  },
+  "popup_extend30": {
+    "message": "+30 min"
+  },
+  "popup_lockHint": {
+    "message": "Block sites for a set time with no way to undo it."
+  },
+  "popup_lockStart": {
+    "message": "Hard Lock…"
+  },
+  "blocked_unknown": {
+    "message": "FocusGuard blocked this page."
+  },
+  "blocked_goBack": {
+    "message": "Go back"
+  },
+  "blocked_closeTab": {
+    "message": "Close tab"
+  },
+  "blocked_openFocusGuard": {
+    "message": "Open FocusGuard"
+  },
+  "blocked_thisSite": {
+    "message": "This site"
+  },
+  "blocked_openTitle": {
+    "message": "Open again · FocusGuard"
+  },
+  "blocked_openAgain": {
+    "message": "This site is open again"
+  },
+  "blocked_openReason": {
+    "message": "The rule for $1 is no longer active."
+  },
+  "blocked_title": {
+    "message": "$1 is blocked · FocusGuard"
+  },
+  "blocked_heading": {
+    "message": "$1 is blocked"
+  },
+  "blocked_srLeft": {
+    "message": "Unblocks in $1 minutes."
+  },
+  "blocked_unblocksIn": {
+    "message": "Unblocks in"
+  },
+  "blocked_at": {
+    "message": "at $1"
+  },
+  "blocked_noEnd": {
+    "message": "No end time"
+  }
+}

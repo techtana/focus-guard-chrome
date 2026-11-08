@@ -1,0 +1,30 @@
+html, body { height: 100%; }
+body {
+  display: flex; align-items: center; justify-content: center;
+  background:
+    radial-gradient(1200px 600px at 50% -10%, var(--primary-soft), transparent 70%),
+    var(--bg);
+}
+.blocked {
+  width: min(620px, calc(100vw - 32px));
+  text-align: center;
+  padding: 40px 32px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+}
+.blocked .logo { width: 56px; height: 56px; margin-bottom: 12px; }
+.blocked h1 { font-size: 1.8rem; word-break: break-word; margin-bottom: 8px; }
+.blocked .reason { color: var(--muted); font-size: 1.02rem; }
+.blocked .count-wrap { margin: 20px 0 8px; }
+.blocked .count { font-size: 2.6rem; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.1; color: var(--primary); }
+.blocked .count-label { color: var(--muted); }
+.blocked .message {
+  margin: 20px auto 0; max-width: 46ch;
+  font-size: 1.15rem; font-style: italic; line-height: 1.5;
+  white-space: pre-wrap;
+}
+.blocked .custom-image { display: block; max-width: 100%; max-height: 280px; margin: 20px auto 0; border-radius: 12px; object-fit: contain; }
+.blocked .actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 28px; }
+.blocked .open { color: var(--success); }

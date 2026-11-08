@@ -1,0 +1,21 @@
+/* Rules and Element hiding sections. */
+.rule-list { list-style: none; margin: 8px 0 0; padding: 0; }
+.rule-row { display: flex; gap: 12px; justify-content: space-between; align-items: flex-start; padding: 12px 0; border-top: 1px solid var(--border); }
+.rule-row:first-child { border-top: none; }
+.rule-main { min-width: 0; flex: 1 1 auto; display: flex; flex-direction: column; gap: 2px; }
+.rule-name { margin: 0; font-size: 1rem; }
+.rule-line { overflow-wrap: anywhere; }
+.rule-actions { flex: 0 0 auto; }
+.rule-budget { margin-top: 6px; max-width: 360px; }
+.rule-editor { margin: 12px 0; border-color: var(--primary); }
+.type-list { gap: 6px; }
+.type-option { align-items: flex-start; }
+.check.day { min-width: 3.5em; }
+.windows { gap: 6px; margin-bottom: 8px; }
+.rules-errors ul { margin: 0 0 8px; padding-left: 18px; }
+.preset-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+.preset-grid .card + .card { margin-top: 0; }
+.preset-options { gap: 4px; }
+.selector-list { color: var(--muted); font-size: 0.85em; }
+.picker-tip { background: var(--primary-soft); border-color: transparent; box-shadow: none; }
+.picker-tip p { margin: 0; }

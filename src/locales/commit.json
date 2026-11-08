@@ -1,0 +1,173 @@
+{
+  "focus_title": {
+    "message": "Focus mode"
+  },
+  "focus_intro": {
+    "message": "Pomodoro sessions block your focus list during work intervals and open it during breaks. You get a notification at each change, and the countdown shows on the toolbar badge."
+  },
+  "focus_end_locked": {
+    "message": "A Hard Lock is active, so this session cannot end early."
+  },
+  "focus_end_challenge": {
+    "message": "Your commitment level is Challenge, so sessions cannot end early."
+  },
+  "focus_end_title": {
+    "message": "End the focus session early?"
+  },
+  "focus_end_body": {
+    "message": "Your focus list will open again right away."
+  },
+  "focus_end_confirm": {
+    "message": "End session"
+  },
+  "focus_ended": {
+    "message": "Focus session ended."
+  },
+  "focus_end": {
+    "message": "End session early"
+  },
+  "focus_running": {
+    "message": "Session in progress"
+  },
+  "focus_work_note": {
+    "message": "Your focus list is blocked until this interval ends."
+  },
+  "focus_break_note": {
+    "message": "Break: your focus list is open until this interval ends."
+  },
+  "focus_start_title": {
+    "message": "Start a session"
+  },
+  "focus_empty_list": {
+    "message": "Your focus list is empty, so nothing will be blocked. Add sites below first."
+  },
+  "focus_started": {
+    "message": "Focus session started."
+  },
+  "focus_start": {
+    "message": "Start focus session"
+  },
+  "focus_list_saved": {
+    "message": "Focus list saved."
+  },
+  "focus_list_title": {
+    "message": "Focus list"
+  },
+  "focus_list_intro": {
+    "message": "Sites blocked only during work intervals. One per line: a domain (reddit.com) or a path (youtube.com/shorts). Start a line with = for an exact URL."
+  },
+  "focus_list_label": {
+    "message": "Sites to block during focus"
+  },
+  "focus_list_save": {
+    "message": "Save focus list"
+  },
+  "focus_other_rules": {
+    "message": "Other rules active only during focus"
+  },
+  "focus_other_hint": {
+    "message": "Edit these on the Rules page."
+  },
+  "focus_cfg_saved": {
+    "message": "Focus settings saved. They apply to the next session."
+  },
+  "focus_cfg_title": {
+    "message": "Session settings"
+  },
+  "focus_work": {
+    "message": "Focus (min)"
+  },
+  "focus_break": {
+    "message": "Break (min)"
+  },
+  "focus_long": {
+    "message": "Long break (min)"
+  },
+  "focus_cycles": {
+    "message": "Cycles"
+  },
+  "focus_cfg_save": {
+    "message": "Save settings"
+  },
+  "focus_cfg_default": {
+    "message": "Reset to 25 / 5 / 15 / 4"
+  },
+  "focus_cfg_hint": {
+    "message": "Changes apply to the next session, not the one running now."
+  },
+  "lock_active_title": {
+    "message": "Active Hard Lock"
+  },
+  "lock_active_hint": {
+    "message": "You can extend a lock or add to it, but not end, shorten or loosen it."
+  },
+  "lock_confirm_title": {
+    "message": "Start a Hard Lock?"
+  },
+  "lock_confirm": {
+    "message": "Start Hard Lock"
+  },
+  "lock_start_title": {
+    "message": "Start a Hard Lock"
+  },
+  "lock_start_intro": {
+    "message": "A Hard Lock blocks sites for a fixed time and cannot be cancelled. Use it for deep work or deadline days."
+  },
+  "lock_start": {
+    "message": "Start Hard Lock…"
+  },
+  "lock_sched_title": {
+    "message": "Recurring locks"
+  },
+  "lock_sched_intro": {
+    "message": "Start a Hard Lock automatically on chosen days, for example weekdays 09:00 for 2 hours."
+  },
+  "lock_title": {
+    "message": "Hard Lock"
+  },
+  "lock_honest_title": {
+    "message": "What a Hard Lock can and cannot do"
+  },
+  "lock_honest_body": {
+    "message": "No extension can stop itself from being disabled or removed on chrome://extensions. FocusGuard does not pretend otherwise. What it does: the lock survives browser restarts, extension reloads and updates, and re-applies as soon as Chrome or the extension starts again."
+  },
+  "settings_commit_title": {
+    "message": "Commitment level"
+  },
+  "settings_commit_intro": {
+    "message": "How hard should it be to loosen your own rules? Tightening rules never needs a check."
+  },
+  "settings_general_title": {
+    "message": "General"
+  },
+  "settings_pause_title": {
+    "message": "Pause FocusGuard"
+  },
+  "settings_privacy_title": {
+    "message": "Privacy"
+  },
+  "settings_perm_title": {
+    "message": "Permissions and why they are needed"
+  },
+  "settings_uninstall_title": {
+    "message": "Uninstall friction"
+  },
+  "settings_title": {
+    "message": "Settings"
+  },
+  "blockpage_title": {
+    "message": "Block page"
+  },
+  "blockpage_intro": {
+    "message": "The block page shows why a site is blocked and when it opens again. Add your own message and image to make it yours."
+  },
+  "blockpage_custom_title": {
+    "message": "Your message and image"
+  },
+  "blockpage_preview_title": {
+    "message": "Preview"
+  },
+  "blockpage_redirect_hint": {
+    "message": "Want to land somewhere useful instead? Create a Redirect rule on the Rules page."
+  }
+}
