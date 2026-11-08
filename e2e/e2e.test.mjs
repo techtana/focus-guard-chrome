@@ -373,3 +373,39 @@ test('Onboarding: ticking templates and levels re-renders without errors and kee
   await page.close();
   assert.deepEqual(errors, []);
 });
+
+test('FR-7.2: a block page image over 2 MB is resized to fit and accepted', async () => {
+  const errors = [];
+  const page = await browser.newPage();
+  page.on('pageerror', (e) => errors.push(e.message));
+  await page.goto(`chrome-extension://${extId}/options.html#blockpage`, { waitUntil: 'networkidle0' });
+  // A 3000x3000 noise PNG barely compresses, so it is far over 2 MB.
+  const inputBytes = await page.evaluate(async () => {
+    const c = document.createElement('canvas');
+    c.width = c.height = 3000;
+    const g = c.getContext('2d');
+    const d = g.createImageData(3000, 3000);
+    const v = new Uint32Array(d.data.buffer);
+    let x = 12345;
+    for (let i = 0; i < v.length; i++) v[i] = (x = (x * 1103515245 + 12345) >>> 0) | 0xff000000;
+    g.putImageData(d, 0, 0);
+    const blob = await new Promise((r) => c.toBlob(r, 'image/png'));
+    const dt = new DataTransfer();
+    dt.items.add(new File([blob], 'big.png', { type: 'image/png' }));
+    const input = document.getElementById('bp-image');
+    input.files = dt.files;
+    input.dispatchEvent(new Event('change'));
+    return blob.size;
+  });
+  assert.ok(inputBytes > 2 * 1024 * 1024, `test image is over 2 MB (${inputBytes})`);
+  await page.waitForFunction(() => document.querySelector('.bp-preview-img')?.src.startsWith('data:image/webp'), { timeout: 30_000 });
+  const src = await page.$eval('.bp-preview-img', (i) => i.src);
+  const bytes = Math.floor((src.length - src.indexOf(',') - 1) * 0.75);
+  assert.ok(bytes <= 2 * 1024 * 1024, `resized image fits (${bytes})`);
+  assert.match(await page.evaluate(() => document.body.innerText), /Image resized to/);
+  // The background accepts it.
+  const res = await apply({ kind: 'blockPage.update', image: src });
+  assert.ok(res.ok, JSON.stringify(res));
+  await page.close();
+  assert.deepEqual(errors, []);
+});

@@ -3,18 +3,10 @@ import { field, h, t, toast } from '../../ui/dom.ts';
 import { applyChange } from '../../ui/gate.ts';
 import { ensureCommitCss } from '../commit-common.ts';
 import type { Section } from '../section.ts';
+import { fitImage } from '../shrink-image.ts';
 
 const MAX_MESSAGE = 280;
 const MAX_IMAGE_BYTES = 2 * 1024 * 1024;
-
-function readAsDataUrl(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const r = new FileReader();
-    r.onload = () => resolve(String(r.result));
-    r.onerror = () => reject(r.error);
-    r.readAsDataURL(file);
-  });
-}
 
 const section: Section = {
   id: 'blockpage',
@@ -72,12 +64,16 @@ const section: Section = {
         file.value = '';
         return;
       }
-      if (f.size > MAX_IMAGE_BYTES) {
-        toast('The image is larger than 2 MB. Choose a smaller one.', 'error');
+      if (f.size > MAX_IMAGE_BYTES) toast('Resizing the image to fit 2 MB…');
+      try {
+        const res = await fitImage(f, MAX_IMAGE_BYTES);
+        pendingImage = res.dataUrl;
+        if (res.shrunk) toast(`Image resized to ${(res.bytes / 1024 / 1024).toFixed(1)} MB to fit. Save to keep it.`);
+      } catch (e) {
+        toast(e instanceof Error ? e.message : 'The image could not be used.', 'error');
         file.value = '';
         return;
       }
-      pendingImage = await readAsDataUrl(f);
       ctx.setDirty(true);
       update();
     });
@@ -111,7 +107,7 @@ const section: Section = {
         h('h2', null, t('blockpage_custom_title', 'Your message and image')),
         field('Message (leave empty for rotating default messages)', message),
         counter,
-        field('Image (up to 2 MB, stored only on this device)', file),
+        field('Image (larger images are resized to fit 2 MB; stored only on this device)', file),
         h('div', { class: 'row' }, removeBtn),
         h('div', { class: 'row' }, h('button', { class: 'btn primary', type: 'button', onclick: save }, 'Save')),
       ),
