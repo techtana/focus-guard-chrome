@@ -354,3 +354,22 @@ test('UI pages render without errors', async () => {
   }
   assert.deepEqual(errors, []);
 });
+
+test('Onboarding: ticking templates and levels re-renders without errors and keeps focus', async () => {
+  const errors = [];
+  const page = await browser.newPage();
+  page.on('pageerror', (e) => errors.push(e.message));
+  await page.goto(`chrome-extension://${extId}/onboarding.html`, { waitUntil: 'networkidle0' });
+  const boxes = await page.$$eval('.tpl input[type=checkbox]', (els) => els.map((e) => e.id));
+  assert.ok(boxes.length >= 3, 'template checkboxes present');
+  for (const id of [...boxes, ...boxes]) {
+    await page.click(`#${id}`);
+    assert.equal(await page.evaluate(() => document.activeElement?.id), id, `focus kept on ${id}`);
+  }
+  for (const id of ['lvl-challenge', 'lvl-password', 'lvl-none']) {
+    await page.click(`#${id}`);
+    assert.equal(await page.evaluate(() => document.activeElement?.id), id, `focus kept on ${id}`);
+  }
+  await page.close();
+  assert.deepEqual(errors, []);
+});

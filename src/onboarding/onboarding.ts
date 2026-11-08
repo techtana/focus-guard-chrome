@@ -5,7 +5,7 @@
 import { newId } from '../shared/defaults.ts';
 import { send, type Snapshot } from '../shared/messages.ts';
 import type { CommitmentLevel, Rule } from '../shared/types.ts';
-import { $, append, clear, field, h, t, toast, uniqueId } from '../ui/dom.ts';
+import { $, append, clear, field, h, t, toast } from '../ui/dom.ts';
 import { applyChange } from '../ui/gate.ts';
 import { buildTemplate, TEMPLATES, type TemplateId, type TemplateInfo, type TemplateOptions } from './templates.ts';
 
@@ -142,7 +142,8 @@ function templateOptions(ts: TemplateState): HTMLElement {
 }
 
 function templateCard(ts: TemplateState): HTMLElement {
-  const id = uniqueId('tpl');
+  // Stable id: render() rebuilds the page, so focus must be restored by an id that survives it.
+  const id = `tpl-${ts.info.id}`;
   const box = h('input', { type: 'checkbox', id, checked: ts.selected, 'aria-describedby': `${id}-sum` });
   box.addEventListener('change', () => {
     ts.selected = box.checked;
@@ -159,7 +160,7 @@ function templateCard(ts: TemplateState): HTMLElement {
 }
 
 function levelOption(level: CommitmentLevel, title: string, desc: string): HTMLElement {
-  const id = uniqueId('lvl');
+  const id = `lvl-${level}`;
   const radio = h('input', { type: 'radio', name: 'level', id, value: level, checked: state.level === level });
   radio.addEventListener('change', () => {
     state.level = level;
