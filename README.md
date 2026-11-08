@@ -26,7 +26,7 @@ Requirements: Node 22.18+ (the tests run TypeScript directly), Chrome 120+ or an
 | `npm run watch` | Rebuild on change |
 | `npm run typecheck` | `tsc --noEmit` over sources and tests |
 | `npm test` | Unit tests (`node --test`, 92 tests) |
-| `npm run e2e` | Build, then load `dist/` into a real headless Chrome with a throwaway profile: core (13), parental controls (7) and the image classifier (1). Uses the installed Chrome; set `CHROME_PATH` to use another. The parental suite needs `openssl` for a throwaway HTTPS certificate. |
+| `npm run e2e` | Build, then load `dist/` into a real headless Chrome with a throwaway profile: core (14), parental controls (7) and the image classifier (1). Uses the installed Chrome; set `CHROME_PATH` to use another. The parental suite needs `openssl` for a throwaway HTTPS certificate. |
 | `npm run zip` | Build and write `focusguard-<version>.zip` for the Chrome Web Store |
 | `npm run icons` | Redraw the PNG icons in `src/icons/` |
 | `npm run check` | typecheck + unit tests + build |
@@ -92,7 +92,7 @@ On the block page a guardian can allow a learned site with the PIN. Sensitivity 
 | FR-4 commitment levels (None, Password with PBKDF2, Challenge with about 300 typed characters and paste off, gate on loosening only) | Done |
 | FR-5 element blocking (selectors, picker, presets, document_start, SPA, versioned preset file) | Done, except a remote preset update channel (see gaps) |
 | FR-6 Focus Mode (25/5/15/4, focus list, notifications, popup and badge countdown, early-end rules) | Done |
-| FR-7 block page and redirect (reason, time until unblock, custom text and image ≤ 2 MB, loop detection) | Done |
+| FR-7 block page and redirect (reason, time until unblock, custom text and image ≤ 2 MB (larger images are resized to fit), loop detection) | Done |
 | FR-8 insights (per-day aggregates, categories with overrides, day/week views, time saved, CSV export, delete all) | Done |
 | FR-9 onboarding (three templates, permissions explained, under 2 minutes) | Done |
 | Non-functional: privacy, permissions, performance, reliability, security (strict CSP, http/https redirects), tamper honesty, accessibility (keyboard, labels, live regions, a timed-delay alternative to the Challenge), compatibility, localization | Done |
